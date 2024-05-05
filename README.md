@@ -1,0 +1,1 @@
+# o_mais_novo_day_trader_do_brasil
