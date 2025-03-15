@@ -22,8 +22,10 @@ def criar_regressao_bd_acao(
     var_pular_final_de_semana_feriados = False,
     ):
 
-
+    # !python -m pip install scikit-learn
     from sklearn.linear_model import LinearRegression
+
+    # !python -m pip install matplotlib
     import matplotlib.pyplot as plt
     from matplotlib import ticker
     import matplotlib.dates as mdates
@@ -104,6 +106,7 @@ def candle_plot( # Usa o navegador para criar o gráfico interativo
     titulo = "",
     ):
   
+    # !python -m pip install plotly
     from plotly.subplots import make_subplots
     import plotly.graph_objects as go
 

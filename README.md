@@ -14,6 +14,7 @@
 - [] Ele falou que um bom momento é quando o preço está voltando para a média móvel, pois é sinal que voltará a subir
     - Exemplo é CEMIG (CMIG4)
 - [] Revisar se meu cálculo de martelo está ok ou não.
+- [] Adicionar forma de instalar pacotes sem precisar fazê-lo manualmente cada vez ([exemplo](https://stackoverflow.com/questions/46419607/how-to-automatically-install-required-packages-from-a-python-script-as-necessary))
 
 ## Concluído antes de 18/01/2025
 - ~~[X] Adicionar uma visão só com o fechamento~~
