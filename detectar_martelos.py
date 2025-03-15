@@ -165,18 +165,16 @@ def candle_plot( # Usa o navegador para criar o gráfico interativo
 
 
 def plota_candlestick_acha_martelos(
-    acao,
-    periodo = "21d",
-    intervalo = "1d",
+    bd_acao,
+    # periodo = "21d",
+    # intervalo = "1d",
     taxa_máxima_para_ser_martelo = 0.2,
-    display_candlestick = True,
-
   ):
     
-    bd_acao = yf.Ticker(acao).history(
-        period = periodo,
-        interval = intervalo
-    )
+    # bd_acao = yf.Ticker(acao).history(
+        # period = periodo,
+        # interval = intervalo
+    # )
     bd_acao["Amplitude Open-Close"] = abs(bd_acao["Open"] - bd_acao["Close"])
     bd_acao["Amplitude High-Low"] = abs(bd_acao["High"] - bd_acao["Low"])
 
@@ -186,17 +184,8 @@ def plota_candlestick_acha_martelos(
     lista_datas_martelo = bd_acao[bd_acao["Martelo?"] == True].sort_index(ascending = False).index.to_pydatetime()
     string_datas_martelo = ""
     for data in lista_datas_martelo:
-        string_datas_martelo = data.strftime("%d/%m/%y") + ", " + string_datas_martelo
+        string_datas_martelo = data.strftime("%Y-%m-%d") + ", " + string_datas_martelo
 
-
-    if display_candlestick == True:
-        candle_plot(
-            bd_acao,
-            volume = True,
-            # mav = np.nan,
-            # colors = ["orange", "yellow", "blue"],
-            titulo = acao,
-        )
 
     return [bd_acao, string_datas_martelo]
 
@@ -213,85 +202,129 @@ def plota_candlestick_acha_martelos(
 # # print(bd_acao)
 
 
+def processar_regressao_e_lista_de_indicadores(
+    bd_acao,
+    coluna_analise,
+    qtd_dias,
+):
 
-def detectar_martelos_todos_os_tickers():
+    [_, _, _, modelo_linear, _] = criar_regressao_bd_acao(
+        bd_acao,
+        coluna = coluna_analise,
+        print_variaveis = False,
+        plot_grafico = False,
+        # titulo = acao + " (fechamento dos últimos " + str(qtd_dias) + " dias)",
+        # tamanho_figsize = (15, 6),
+        # rotacao = 60,
+    )
+
+    lista_regressao_e_indicadores = []
+    lista_regressao_e_indicadores_cabecalho = []
+    
+    lista_regressao_e_indicadores.append(modelo_linear.coef_[0][0]) # 
+    lista_regressao_e_indicadores_cabecalho.append("Alfa HLC; últimos "  + str(qtd_dias) + " dias")
+        
+    # bd_lista_acoes_analise["Taxa média de Remuneração (R$)"] = bd_lista_acoes_analise["Preço fechamento (R$)"]*bd_lista_acoes_analise["Alfa"]
+    # bd_lista_acoes_analise["Taxa média de Remuneração (pp/R$, " + str(qtd_dias) +" dias)"] = \
+    # bd_lista_acoes_analise["Alfa (" + str(qtd_dias) +" dias)"]/bd_lista_acoes_analise["Preço fechamento (R$, " + str(qtd_dias) +" dias)"]
+
+    return lista_regressao_e_indicadores_cabecalho, lista_regressao_e_indicadores
+
+
+
+def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 13):
+    # qtd_dias_maximo = int(np.round(55/7*5))
+    # qtd_dias_minimo = int(np.round(21/7*5))
+    
     import pandas as pd
     from datetime import datetime, timedelta
 
 
-    bd_lista_acoes_analise = pd.read_excel("Bases/Lista de ações Tratada.xlsx", index_col = "Ticker")
+    bd_arquivo_original = pd.read_excel("Bases/Lista de ações Tratada.xlsx", index_col = "Ticker")
 
     coluna_analise = "HLC"
+    acoes = bd_arquivo_original.index#[[0]]
 
-    qtd_dias_maximo = int(np.round(55/7*5))
-    qtd_dias_minimo = int(np.round(21/7*5))
-    for acao in bd_lista_acoes_analise.index:#[[0]]:
-        # print(acao)
+    for contador_acoes, acao in enumerate(acoes):
+        print(acao)
 
-        bd_acao = yf.Ticker(acao + ".SA").history(
-            start = datetime.today() - timedelta(days=qtd_dias_maximo),
-            end = datetime.today(),
-            interval = "1d"
-        )
-        bd_acao.index = bd_acao.index.tz_localize(None)
-        bd_acao[coluna_analise] = (bd_acao["High"] + bd_acao["Low"] + bd_acao["Close"])/3
+        try:
+            bd_acao = yf.Ticker(acao + ".SA").history(
+                start = datetime.today() - timedelta(days=qtd_dias_maximo),
+                end = datetime.today(),
+                interval = "1d"
+            )
+            bd_acao[coluna_analise] = (bd_acao["High"] + bd_acao["Low"] + bd_acao["Close"])/3
+            # display(bd_acao)
 
-        bd_acao_minimo = bd_acao.iloc[-(qtd_dias_minimo):].copy()
+            if contador_acoes == 0:
+                lista_datas = bd_acao.index.strftime("%Y-%m-%d").to_list()
+                # display(lista_datas)
 
-        [_, _, _, modelo_linear, _] = criar_regressao_bd_acao(
-            bd_acao_minimo,
-            coluna = coluna_analise,
-            print_variaveis = False,
-            plot_grafico = False,
-            # titulo = acao + " (fechamento dos últimos " + str(qtd_dias_minimo) + " dias)",
-            # tamanho_figsize = (15, 6),
-            # rotacao = 60,
-        )
+                lista_cabecalho = []
+                lista_acoes = []
+            
+            lista_acao = []
 
-        bd_lista_acoes_analise.loc[acao, "Alfa (" + str(qtd_dias_minimo) +" dias)"] = modelo_linear.coef_[0][0]
-        bd_lista_acoes_analise.loc[acao, "Preço Close há " + str(qtd_dias_minimo) +" dias"] = bd_acao_minimo.iloc[0]["Close"]
-        # bd_lista_acoes_analise["Taxa média de Remuneração (R$)"] = bd_lista_acoes_analise["Preço fechamento (R$)"]*bd_lista_acoes_analise["Alfa"]
-        # bd_lista_acoes_analise["Taxa média de Remuneração (pp/R$, " + str(qtd_dias_minimo) +" dias)"] = \
-        # bd_lista_acoes_analise["Alfa (" + str(qtd_dias_minimo) +" dias)"]/bd_lista_acoes_analise["Preço fechamento (R$, " + str(qtd_dias_minimo) +" dias)"]
-        bd_lista_acoes_analise.loc[acao, "Preço HLC em "+ datetime.now().strftime("%d/%m/%Y")] = \
-        (bd_acao_minimo.iloc[len(bd_acao_minimo)-1].loc["High"]+bd_acao_minimo.iloc[len(bd_acao_minimo)-1].loc["Low"]+bd_acao_minimo.iloc[len(bd_acao_minimo)-1].loc["Close"])/3
-        bd_lista_acoes_analise.loc[acao, "Preço HLC há "+ str(qtd_dias_minimo) +" dias"] = \
-        (bd_acao_minimo.iloc[0].loc["High"]+bd_acao_minimo.iloc[0].loc["Low"]+bd_acao_minimo.iloc[0].loc["Close"])/3
+            for counter, data in enumerate(lista_datas):
+                # display(data)
+                
+                if contador_acoes == 0:
+                    lista_cabecalho = lista_cabecalho + [data + '; ' + s for s in bd_acao.columns]
+                
+                lista_acao = lista_acao + bd_acao.iloc[counter].to_list()
 
 
-        [_, _, _, modelo_linear, _] = criar_regressao_bd_acao(
-            bd_acao,
-            coluna = coluna_analise,
-            print_variaveis = False,
-            plot_grafico = False,
-            # titulo = acao + " (fechamento dos últimos " + str(qtd_dias_maximo) + " dias)",
-            # tamanho_figsize = (15, 6),
-            # rotacao = 60,
-        )
+            lista_regressao_e_indicadores_cabecalho_minimo, lista_regressao_e_indicadores_minimo = processar_regressao_e_lista_de_indicadores(
+                bd_acao.iloc[-(qtd_dias_minimo):].copy(),
+                coluna_analise,
+                qtd_dias_minimo
+            )
 
-        bd_lista_acoes_analise.loc[acao, "Alfa (" + str(qtd_dias_maximo) +" dias)"] = modelo_linear.coef_[0][0]
-        bd_lista_acoes_analise.loc[acao, "Preço Close há " + str(qtd_dias_maximo) +" dias"] = bd_acao.iloc[0]["Close"]
-        # bd_lista_acoes_analise["Taxa média de Remuneração (R$)"] = bd_lista_acoes_analise["Preço fechamento (R$)"]*bd_lista_acoes_analise["Alfa"]
-        # bd_lista_acoes_analise["Taxa média de Remuneração (pp/R$, " + str(qtd_dias_maximo) +" dias)"] = \
-        # bd_lista_acoes_analise["Alfa (" + str(qtd_dias_maximo) +" dias)"]/bd_lista_acoes_analise["Preço fechamento (R$, " + str(qtd_dias_maximo) +" dias)"]
-        bd_lista_acoes_analise.loc[acao, "Preço HLC há "+ str(qtd_dias_maximo) +" dias"] = \
-        (bd_acao.iloc[0].loc["High"]+bd_acao.iloc[0].loc["Low"]+bd_acao.iloc[0].loc["Close"])/3
-        # bd_lista_acoes_analise
+            lista_regressao_e_indicadores_cabecalho_maximo, lista_regressao_e_indicadores_maximo = processar_regressao_e_lista_de_indicadores(
+                bd_acao.copy(),
+                coluna_analise,
+                qtd_dias_maximo
+            )
 
-
-        [_, string_datas_martelo] = plota_candlestick_acha_martelos(
-            acao =  acao + ".SA",
-            periodo = str(qtd_dias_maximo)+"d",
-            intervalo = "1d",
-            taxa_máxima_para_ser_martelo = 0.2,
-            display_candlestick = False,
-        )
-        # display(string_datas_martelo)
-        bd_lista_acoes_analise.loc[acao, "Datas dos martelos"] = string_datas_martelo[:-2]
+            [_, string_datas_martelo] = plota_candlestick_acha_martelos(
+                bd_acao,
+                # periodo = str(qtd_dias_maximo)+"d",
+                # intervalo = "1d",
+                taxa_máxima_para_ser_martelo = 0.2,
+                # display_candlestick = False,
+            )
+            # display(string_datas_martelo)
 
 
-    bd_lista_acoes_analise.to_excel('Bases/Lista de ações Análise ' + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
+            if contador_acoes == 0:
+                lista_cabecalho = bd_arquivo_original.reset_index().columns.to_list() \
+                    + lista_cabecalho \
+                    + lista_regressao_e_indicadores_cabecalho_minimo \
+                    + lista_regressao_e_indicadores_cabecalho_maximo \
+                    + ["Martelos"]
+                # display(lista_cabecalho)
 
-    return bd_lista_acoes_analise
+            lista_acao = [acao] \
+                    + bd_arquivo_original.loc[acao].to_list() \
+                    + lista_acao \
+                    + lista_regressao_e_indicadores_minimo \
+                    + lista_regressao_e_indicadores_maximo \
+                    + [string_datas_martelo]
+            # display(lista_acao)
+
+            lista_acoes.append(lista_acao)
+            # display(lista_acoes)
+
+        except:
+            contador_acoes = contador_acoes - 1
+
+    bd_acao_historico = pd.DataFrame(columns = lista_cabecalho, data = lista_acoes)
+    # display(bd_acao_historico)
+
+
+    bd_acao_historico.to_excel('Bases/Lista de ações Análise ' + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
+
+    return bd_acao_historico
 
 detectar_martelos_todos_os_tickers()

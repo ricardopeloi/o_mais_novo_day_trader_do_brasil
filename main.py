@@ -38,7 +38,10 @@ def main():
     tratar_lista_B3(ler_lista_B3())
 
     from detectar_martelos import criar_regressao_bd_acao, detectar_martelos_todos_os_tickers
-    detectar_martelos_todos_os_tickers()
+    detectar_martelos_todos_os_tickers(
+        # qtd_dias_maximo = 55,
+        # qtd_dias_minimo = 13
+    )
 
 
     ## IMPRIME AS 5 MELHORES AÇÕES DOS ÚLTIMOS DIAS
