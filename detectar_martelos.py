@@ -187,21 +187,22 @@ def plota_candlestick_acha_martelos(
     bd_acao.loc[(bd_acao["Martelo?"] == True) * (bd_acao["Open"] <= bd_acao["Close"]), "Tipo Martelo"] = "Subida"
     # display(bd_acao)
 
-    lista_datas_martelo = bd_acao[bd_acao["Martelo?"] == True].sort_index(ascending = False).index.to_pydatetime()
-    # string_datas_martelo = ""
+    lista_datas_martelo = bd_acao[bd_acao["Martelo?"] == True].sort_index(ascending = False).index.to_list()
+    string_datas_martelo = ""
 
     lista_tipos_martelo = bd_acao[bd_acao["Martelo?"] == True].sort_index(ascending = False)["Tipo Martelo"].to_list()
-    # string_tipos_martelo = ""
+    string_tipos_martelo = ""
 
-    # for data in lista_datas_martelo:
-        # string_datas_martelo = data.strftime("%Y-%m-%d") + ", " + string_datas_martelo
-    # 
-    # for tipo in lista_tipos_martelo:
-        # string_tipos_martelo = tipo + ", " + string_tipos_martelo
+    for data in lista_datas_martelo:
+        string_datas_martelo = data.strftime("%Y-%m-%d") + ", " + string_datas_martelo
+
+    for tipo in lista_tipos_martelo:
+        string_tipos_martelo = tipo + ", " + string_tipos_martelo
 
 
-    # return [bd_acao, string_datas_martelo, string_tipos_martelo]
-    return [bd_acao, lista_datas_martelo, lista_tipos_martelo]
+    return [bd_acao, string_datas_martelo, string_tipos_martelo]
+    # return [bd_acao, lista_datas_martelo, lista_tipos_martelo]
+    # return [bd_acao, string_datas_martelo, lista_tipos_martelo]
 
 
 
@@ -258,6 +259,7 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
 
     coluna_analise = "HLC"
     acoes = bd_arquivo_original.index#[[0]]
+    # acoes = ["VIVT3", "CLSA3"]
 
     for contador_acoes, acao in enumerate(acoes):
         print(acao)
@@ -338,7 +340,7 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
             print("erro")
 
     bd_acao_historico = pd.DataFrame(columns = lista_cabecalho, data = lista_acoes)
-    # display(bd_acao_historico)
+    # print(bd_acao_historico["Martelos"])
 
 
     bd_acao_historico.to_excel('Bases/Lista de ações Análise ' + datetime.today().strftime("%Y-%m-%d") + '.xlsx', index = False)
