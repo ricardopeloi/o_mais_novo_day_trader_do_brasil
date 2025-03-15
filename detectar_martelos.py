@@ -180,14 +180,28 @@ def plota_candlestick_acha_martelos(
 
     # taxa_máxima_para_ser_martelo = 0.2
     bd_acao["Martelo?"] = (bd_acao["Amplitude Open-Close"] < taxa_máxima_para_ser_martelo * bd_acao["Amplitude High-Low"])
+    # display(bd_acao)
+
+    # bd_acao.loc[:, "Tipo Martelo"] = ""
+    bd_acao.loc[(bd_acao["Martelo?"] == True) * (bd_acao["Open"] > bd_acao["Close"]), "Tipo Martelo"] = "Descida"
+    bd_acao.loc[(bd_acao["Martelo?"] == True) * (bd_acao["Open"] <= bd_acao["Close"]), "Tipo Martelo"] = "Subida"
+    # display(bd_acao)
 
     lista_datas_martelo = bd_acao[bd_acao["Martelo?"] == True].sort_index(ascending = False).index.to_pydatetime()
-    string_datas_martelo = ""
-    for data in lista_datas_martelo:
-        string_datas_martelo = data.strftime("%Y-%m-%d") + ", " + string_datas_martelo
+    # string_datas_martelo = ""
+
+    lista_tipos_martelo = bd_acao[bd_acao["Martelo?"] == True].sort_index(ascending = False)["Tipo Martelo"].to_list()
+    # string_tipos_martelo = ""
+
+    # for data in lista_datas_martelo:
+        # string_datas_martelo = data.strftime("%Y-%m-%d") + ", " + string_datas_martelo
+    # 
+    # for tipo in lista_tipos_martelo:
+        # string_tipos_martelo = tipo + ", " + string_tipos_martelo
 
 
-    return [bd_acao, string_datas_martelo]
+    # return [bd_acao, string_datas_martelo, string_tipos_martelo]
+    return [bd_acao, lista_datas_martelo, lista_tipos_martelo]
 
 
 
@@ -280,14 +294,16 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
                 coluna_analise,
                 qtd_dias_minimo
             )
+            # display(lista_regressao_e_indicadores_minimo)
 
             lista_regressao_e_indicadores_cabecalho_maximo, lista_regressao_e_indicadores_maximo = processar_regressao_e_lista_de_indicadores(
                 bd_acao.copy(),
                 coluna_analise,
                 qtd_dias_maximo
             )
+            # display(lista_regressao_e_indicadores_maximo)
 
-            [_, string_datas_martelo] = plota_candlestick_acha_martelos(
+            [_, string_datas_martelo, string_tipos_martelo] = plota_candlestick_acha_martelos(
                 bd_acao,
                 # periodo = str(qtd_dias_maximo)+"d",
                 # intervalo = "1d",
@@ -302,7 +318,8 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
                     + lista_cabecalho \
                     + lista_regressao_e_indicadores_cabecalho_minimo \
                     + lista_regressao_e_indicadores_cabecalho_maximo \
-                    + ["Martelos"]
+                    + ["Martelos", "Tipos de Martelos"]
+                # display(len(lista_cabecalho))
                 # display(lista_cabecalho)
 
             lista_acao = [acao] \
@@ -310,20 +327,21 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
                     + lista_acao \
                     + lista_regressao_e_indicadores_minimo \
                     + lista_regressao_e_indicadores_maximo \
-                    + [string_datas_martelo]
-            # display(lista_acao)
+                    + [string_datas_martelo, string_tipos_martelo]
+            # display(len(lista_acao))
 
             lista_acoes.append(lista_acao)
             # display(lista_acoes)
 
         except:
             contador_acoes = contador_acoes - 1
+            print("erro")
 
     bd_acao_historico = pd.DataFrame(columns = lista_cabecalho, data = lista_acoes)
     # display(bd_acao_historico)
 
 
-    bd_acao_historico.to_excel('Bases/Lista de ações Análise ' + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
+    bd_acao_historico.to_excel('Bases/Lista de ações Análise ' + datetime.today().strftime("%Y-%m-%d") + '.xlsx', index = False)
 
     return bd_acao_historico
 

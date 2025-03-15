@@ -1,14 +1,16 @@
 # o_mais_novo_day_trader_do_brasil
 
 # To-Do
-- [] Replicar o que já existe no Jupyter Notebook (antes de 18/01/2025) para um conjunto de arquivos em Python que possa ser executado diariamente
+- [X] Replicar o que já existe no Jupyter Notebook (antes de 18/01/2025) para um conjunto de arquivos em Python que possa ser executado diariamente
     - ~~[X] Ler dados da B3 usando BeautifulSoup~~
     - ~~[X] Montar uma base completa com os dados de mercado de cada Ticker~~
     - ~~[X] Replicar análise de Martelo e cálculo das inclinações das curvas (Alfa)~~
-    - [] Automatizar execução diária
-- [] Execução demora muito, acho que não precisa atualizar a lista de ações toda vez, vou tirar isso para ver se dá para demorar menos
-- [] Bug: está tentando ler ações da DASA11 e não acha. Essa ação deixou de existir? Por que não consegue ler? E ainda lê duas vezes...
-- [] Ajustar alfas para 13 e 55 dias
+- [] Automatizar execução diária
+- [X] Execução demora muito, acho que não precisa atualizar a lista de ações toda vez, vou tirar isso para ver se dá para demorar menos
+    - 15/03: O que demora mais é que as ações precisam ser lidas uma a uma, mas eu já reduzi algumas leituras duplicadas da mesma ação
+- [X] Bug: está tentando ler ações da DASA11 e não acha. Essa ação deixou de existir? Por que não consegue ler? E ainda lê duas vezes...
+    - 15/03: havia uma leitura duplicada mesmo
+- [X] Ajustar alfas para 13 e 55 dias
 - [] Adicionar coluna de %13d e %55d, que é o Preço/Alfa
 - [] Ordenar por essa coluna de %média
 - [] Ele falou que um bom momento é quando o preço está voltando para a média móvel, pois é sinal que voltará a subir
