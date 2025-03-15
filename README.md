@@ -3,7 +3,6 @@
 # To-Do
 - [] Automatizar execução diária
 - [] Adicionar coluna de %13d e %55d, que é o Preço/Alfa
-- [] Ordenar por essa coluna de %média
 - [] Ele falou que um bom momento é quando o preço está voltando para a média móvel, pois é sinal que voltará a subir
     - Exemplo é CEMIG (CMIG4)
 - [] Adicionar forma de instalar pacotes sem precisar fazê-lo manualmente cada vez ([exemplo](https://stackoverflow.com/questions/46419607/how-to-automatically-install-required-packages-from-a-python-script-as-necessary))
@@ -17,6 +16,7 @@
     - havia uma leitura duplicada mesmo
 ~~- [X] Execução demora muito, acho que não precisa atualizar a lista de ações toda vez, vou tirar isso para ver se dá para demorar menos~~
     - 15/03: O que demora mais é que as ações precisam ser lidas uma a uma, mas eu já reduzi algumas leituras duplicadas da mesma ação
+~~- [X] Ordenar por essa coluna de maiores alfas (variações positivas no valor HLC da ação)~~
 
 
 ## Concluído antes de 18/01/2025
