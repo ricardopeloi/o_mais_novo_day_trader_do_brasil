@@ -255,7 +255,7 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
     from datetime import datetime, timedelta
 
 
-    bd_arquivo_original = pd.read_excel("Bases/Lista de ações Tratada.xlsx", index_col = "Ticker")
+    bd_arquivo_original = pd.read_excel("Bases/Lista de ações Tratada.xlsx").set_index("Ticker")
 
     coluna_analise = "HLC"
     acoes = bd_arquivo_original.index#[[0]]
@@ -354,7 +354,7 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
     # display(bd_acao_historico)
 
 
-    bd_acao_historico.to_excel('Bases/Lista de ações Análise ' + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
+    bd_acao_historico.set_index("Ticker").to_excel('Bases/Lista de ações Análise ' + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
 
     bd_acoes = bd_acoes.reset_index()
     bd_acoes["Date"] = bd_acoes["Date"].dt.tz_localize(None)

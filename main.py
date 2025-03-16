@@ -41,10 +41,10 @@ def main():
     # tratar_lista_B3(bd_lista_acoes)
 
     from detectar_martelos import criar_regressao_bd_acao, detectar_martelos_todos_os_tickers
-    # detectar_martelos_todos_os_tickers(
-    #     # qtd_dias_maximo = 55,
-    #     # qtd_dias_minimo = 13
-    # )
+    detectar_martelos_todos_os_tickers(
+        # qtd_dias_maximo = 55,
+        # qtd_dias_minimo = 13
+    )
 
 
     ## IMPRIME AS 5 MELHORES AÇÕES DOS ÚLTIMOS DIAS
@@ -78,7 +78,7 @@ def main():
         # bd_historico_completo_acao.index = bd_historico_completo_acao.index.tz_localize(None)
 
         print(acao)
-        [bd_acao_regressao, media, margem, modelo_linear, valor_fechamento] = criar_regressao_bd_acao(
+        [_, _, _, _, _] = criar_regressao_bd_acao(
             bd_historico_completo_acao,
             coluna = "Close",
             print_variaveis = True,

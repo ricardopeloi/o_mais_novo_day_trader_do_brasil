@@ -67,7 +67,7 @@ def tratar_lista_B3(bd_lista_acoes):
     lista_cabecalho = []
 
 
-    print("=== LENDO DADOS DE MARKET CAP ===")
+    print("=== LENDO DADOS DA AÇÃO ===")
     for contador, ticker_acao in enumerate(bd_lista_acoes.index):
         print(str(contador + 1) + " de " + str(len(bd_lista_acoes.index)) + "; " + ticker_acao)
         acao = yf.Ticker(ticker_acao + ".SA")
@@ -94,7 +94,7 @@ def tratar_lista_B3(bd_lista_acoes):
             
     bd_lista_acoes = pd.DataFrame(columns = lista_cabecalho, data = listas_infos_completas)
 
-    print("=== FIM LEITURA DOS DADOS DE MARKET CAP ===")
+    print("=== FIM LEITURA DOS DADOS DA AÇÃO ===")
     bd_lista_acoes_tratada = bd_lista_acoes[
         (bd_lista_acoes["marketCap"] >= var_corte_market_cap)
         * (bd_lista_acoes[var_coluna_volume].iloc[:, 0] >= var_corte_volume)
@@ -102,7 +102,7 @@ def tratar_lista_B3(bd_lista_acoes):
         ]
 
 
-    bd_lista_acoes_tratada.to_excel('Bases/Lista de ações Tratada.xlsx')
+    bd_lista_acoes_tratada.set_index("Ticker").to_excel('Bases/Lista de ações Tratada.xlsx')
 
     return bd_lista_acoes_tratada
 
@@ -123,14 +123,15 @@ lista_campos_consulta_api = \
      'fiftyDayAverageChangePercent', 'twoHundredDayAverageChange', 'twoHundredDayAverageChangePercent']
 
 
+# tratar_lista_B3(ler_lista_B3())
 
 # bd_lista_acoes = ler_lista_B3()
 # import pandas as pd
 # bd_lista_acoes = pd.read_excel('Bases/Lista de ações.xlsx', index_col = "Ticker")
 # print(tratar_lista_B3(bd_lista_acoes))
-# print(bd_lista_acoes)
 
 # print(bd_lista_acoes)
+
 # print(len(bd_lista_acoes))
 # print(len(bd_lista_acoes.index.unique()))
 # print(len(bd_lista_acoes.reset_index().drop_duplicates(subset = "Ticker").set_index("Ticker")))
