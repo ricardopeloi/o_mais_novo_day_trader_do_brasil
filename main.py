@@ -56,24 +56,27 @@ def main():
 
     
     bd_lista_acoes_analise = pd.read_excel(var_arquivo_mais_recente, index_col = "Ticker")
-    print(bd_lista_acoes_analise.sort_values("Alfa (15 dias)", ascending = False).head(5))
+    print(bd_lista_acoes_analise.sort_values("Alfa HLC; últimos 55 dias", ascending = False).head(5))
     print()
+
+    bd_historico_completo = pd.read_excel("Bases\Base de Dados Histórico.xlsx")
 
 
     qtd_dias = 15
-    for acao in bd_lista_acoes_analise.sort_values("Alfa (15 dias)", ascending = False).head(5).index:
+    for acao in bd_lista_acoes_analise.sort_values("Alfa HLC; últimos 55 dias", ascending = False).head(5).index:
         # print(acao)
 
-        bd_acao = yf.Ticker(acao + ".SA").history(
-            start = datetime.today() - timedelta(days=qtd_dias),
-            end = datetime.today(),
-            interval = "1d"
-        )
-        bd_acao.index = bd_acao.index.tz_localize(None)
+        # bd_acao = yf.Ticker(acao + ".SA").history(
+        #     start = datetime.today() - timedelta(days=qtd_dias),
+        #     end = datetime.today(),
+        #     interval = "1d"
+        # )
+        bd_historico_completo_acao = bd_historico_completo[bd_historico_completo["Ticker"] == acao]
+        bd_historico_completo_acao.index = bd_historico_completo_acao.index.tz_localize(None)
 
         print(acao)
         [bd_acao_regressao, media, margem, modelo_linear, valor_fechamento] = criar_regressao_bd_acao(
-            bd_acao,
+            bd_historico_completo_acao,
             coluna = "Close",
             print_variaveis = True,
             # plot_grafico = True,

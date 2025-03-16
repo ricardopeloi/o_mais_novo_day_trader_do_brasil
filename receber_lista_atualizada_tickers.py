@@ -30,6 +30,8 @@ def ler_lista_B3():
     bd_lista_acoes = pd.DataFrame(lista_acoes)
     # bd_lista_acoes[data_de_hoje] = bd_lista_acoes[data_de_hoje].str.replace(".", "", regex = True).astype(int)
     bd_lista_acoes[data_de_hoje] = bd_lista_acoes[data_de_hoje].str.replace(".", "").astype(int)
+    bd_lista_acoes = bd_lista_acoes.drop_duplicates(subset = "Ticker")
+    
     bd_lista_acoes.to_excel('Bases/Lista de ações.xlsx')
 
     bd_lista_acoes = bd_lista_acoes.set_index("Ticker")
@@ -52,8 +54,9 @@ def tratar_lista_B3(bd_lista_acoes):
     # !python -m pip install mplfinance
     # import mplfinance as mpf
 
-    
-    for ticker_acao in bd_lista_acoes.index:
+    print("=== LENDO DADOS DE MARKET CAP ===")
+    for contador, ticker_acao in enumerate(bd_lista_acoes.index):
+        print(str(contador + 1) + " de " + str(len(bd_lista_acoes.index)) + "; " + ticker_acao)
         acao = yf.Ticker(ticker_acao + ".SA")
         try:
             bd_lista_acoes.loc[ticker_acao, "Market Cap"] = acao.info["marketCap"]
@@ -61,6 +64,7 @@ def tratar_lista_B3(bd_lista_acoes):
             pass
 
 
+    print("=== FIM LEITURA DOS DADOS DE MARKET CAP ===")
     bd_lista_acoes_tratada = bd_lista_acoes[
         (bd_lista_acoes["Market Cap"] >= var_corte_market_cap)
         * (bd_lista_acoes[var_coluna_volume].iloc[:, 0] >= var_corte_volume)
@@ -73,5 +77,15 @@ def tratar_lista_B3(bd_lista_acoes):
     return bd_lista_acoes_tratada
 
 
+bd_lista_acoes = ler_lista_B3()
+tratar_lista_B3(bd_lista_acoes)
 
-tratar_lista_B3(ler_lista_B3())
+# print(bd_lista_acoes)
+# print(len(bd_lista_acoes))
+# print(len(bd_lista_acoes.index.unique()))
+# print(len(bd_lista_acoes.reset_index().drop_duplicates(subset = "Ticker").set_index("Ticker")))
+
+# print(
+#     # bd_lista_acoes.reset_index().groupby("Ticker").count().sort_values("Nome da Empresa")
+#     bd_lista_acoes.reset_index()[bd_lista_acoes.reset_index()["Ticker"].isin(["IGTI11", "IGTI3", "IGTI4"])].set_index("Ticker")
+# )

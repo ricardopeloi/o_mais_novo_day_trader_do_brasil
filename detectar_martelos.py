@@ -261,8 +261,12 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
     acoes = bd_arquivo_original.index#[[0]]
     # acoes = ["VIVT3", "CLSA3"]
 
+    print("=== LENDO DADOS DE HISTÓRICO ===")
     for contador_acoes, acao in enumerate(acoes):
-        print(acao)
+        print(str(contador_acoes + 1) + " de " + str(len(acoes)) + "; " + acao)
+        # print(acao)
+        if contador_acoes == 0:
+            bd_acoes = pd.DataFrame()
 
         try:
             bd_acao = yf.Ticker(acao + ".SA").history(
@@ -270,81 +274,93 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
                 end = datetime.today(),
                 interval = "1d"
             )
-            bd_acao[coluna_analise] = (bd_acao["High"] + bd_acao["Low"] + bd_acao["Close"])/3
-            # display(bd_acao)
 
-            if contador_acoes == 0:
-                lista_datas = bd_acao.index.strftime("%Y-%m-%d").to_list()
-                # display(lista_datas)
+            if len(bd_acao) != 0:
+                bd_acao[coluna_analise] = (bd_acao["High"] + bd_acao["Low"] + bd_acao["Close"])/3
+                bd_acao["Ticker"] = acao
+                bd_acoes = pd.concat([bd_acoes, bd_acao])
+                # bd_acao = bd_acao.drop("Ação", axis = 1)
+                # display(bd_acao)
 
-                lista_cabecalho = []
-                lista_acoes = []
-            
-            lista_acao = []
-
-            for counter, data in enumerate(lista_datas):
-                # display(data)
-                
                 if contador_acoes == 0:
-                    lista_cabecalho = lista_cabecalho + [data + '; ' + s for s in bd_acao.columns]
+                    lista_datas = bd_acao.index.strftime("%Y-%m-%d").to_list()
+                    # display(lista_datas)
+
+                    lista_cabecalho = []
+                    lista_acoes = []
                 
-                lista_acao = lista_acao + bd_acao.iloc[counter].to_list()
+                lista_acao = []
+
+                for counter, data in enumerate(lista_datas):
+                    # display(data)
+                    
+                    if contador_acoes == 0:
+                        lista_cabecalho = lista_cabecalho + [data + '; ' + s for s in bd_acao.columns]
+                    
+                    lista_acao = lista_acao + bd_acao.iloc[counter].to_list()
 
 
-            lista_regressao_e_indicadores_cabecalho_minimo, lista_regressao_e_indicadores_minimo = processar_regressao_e_lista_de_indicadores(
-                bd_acao.iloc[-(qtd_dias_minimo):].copy(),
-                coluna_analise,
-                qtd_dias_minimo
-            )
-            # display(lista_regressao_e_indicadores_minimo)
+                lista_regressao_e_indicadores_cabecalho_minimo, lista_regressao_e_indicadores_minimo = processar_regressao_e_lista_de_indicadores(
+                    bd_acao.iloc[-(qtd_dias_minimo):].copy(),
+                    coluna_analise,
+                    qtd_dias_minimo
+                )
+                # display(lista_regressao_e_indicadores_minimo)
 
-            lista_regressao_e_indicadores_cabecalho_maximo, lista_regressao_e_indicadores_maximo = processar_regressao_e_lista_de_indicadores(
-                bd_acao.copy(),
-                coluna_analise,
-                qtd_dias_maximo
-            )
-            # display(lista_regressao_e_indicadores_maximo)
+                lista_regressao_e_indicadores_cabecalho_maximo, lista_regressao_e_indicadores_maximo = processar_regressao_e_lista_de_indicadores(
+                    bd_acao.copy(),
+                    coluna_analise,
+                    qtd_dias_maximo
+                )
+                # display(lista_regressao_e_indicadores_maximo)
 
-            [_, string_datas_martelo, string_tipos_martelo] = plota_candlestick_acha_martelos(
-                bd_acao,
-                # periodo = str(qtd_dias_maximo)+"d",
-                # intervalo = "1d",
-                taxa_máxima_para_ser_martelo = 0.2,
-                # display_candlestick = False,
-            )
-            # display(string_datas_martelo)
+                [_, string_datas_martelo, string_tipos_martelo] = plota_candlestick_acha_martelos(
+                    bd_acao,
+                    # periodo = str(qtd_dias_maximo)+"d",
+                    # intervalo = "1d",
+                    taxa_máxima_para_ser_martelo = 0.2,
+                    # display_candlestick = False,
+                )
+                # display(string_datas_martelo)
 
 
-            if contador_acoes == 0:
-                lista_cabecalho = bd_arquivo_original.reset_index().columns.to_list() \
-                    + lista_cabecalho \
-                    + lista_regressao_e_indicadores_cabecalho_minimo \
-                    + lista_regressao_e_indicadores_cabecalho_maximo \
-                    + ["Martelos", "Tipos de Martelos"]
-                # display(len(lista_cabecalho))
-                # display(lista_cabecalho)
+                if contador_acoes == 0:
+                    lista_cabecalho = bd_arquivo_original.reset_index().columns.to_list() \
+                        + lista_cabecalho \
+                        + lista_regressao_e_indicadores_cabecalho_minimo \
+                        + lista_regressao_e_indicadores_cabecalho_maximo \
+                        + ["Martelos", "Tipos de Martelos"]
+                    # display(len(lista_cabecalho))
+                    # display(lista_cabecalho)
 
-            lista_acao = [acao] \
-                    + bd_arquivo_original.loc[acao].to_list() \
-                    + lista_acao \
-                    + lista_regressao_e_indicadores_minimo \
-                    + lista_regressao_e_indicadores_maximo \
-                    + [string_datas_martelo, string_tipos_martelo]
-            # display(len(lista_acao))
+                lista_acao = [acao] \
+                        + bd_arquivo_original.loc[acao].to_list() \
+                        + lista_acao \
+                        + lista_regressao_e_indicadores_minimo \
+                        + lista_regressao_e_indicadores_maximo \
+                        + [string_datas_martelo, string_tipos_martelo]
+                # display(len(lista_acao))
 
-            lista_acoes.append(lista_acao)
-            # display(lista_acoes)
+                lista_acoes.append(lista_acao)
+                # display(lista_acoes)
 
         except:
             contador_acoes = contador_acoes - 1
             print("erro")
 
+    print("=== FIM DA LEITURA DOS DADOS DE HISTÓRICO ===")
+
     bd_acao_historico = pd.DataFrame(columns = lista_cabecalho, data = lista_acoes)
-    # print(bd_acao_historico["Martelos"])
+    # display(bd_acao_historico)
 
 
-    bd_acao_historico.to_excel('Bases/Lista de ações Análise ' + datetime.today().strftime("%Y-%m-%d") + '.xlsx', index = False)
+    bd_acao_historico.to_excel('Bases/Lista de ações Análise ' + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
 
-    return bd_acao_historico
+    bd_acoes = bd_acoes.reset_index()
+    bd_acoes["Date"] = bd_acoes["Date"].dt.tz_localize(None)
+    bd_acoes = bd_acoes.set_index("Date")
+    bd_acoes.to_excel('Bases/Base de Dados Histórico.xlsx')
+
+    return bd_acao_historico, bd_acoes
 
 detectar_martelos_todos_os_tickers()
