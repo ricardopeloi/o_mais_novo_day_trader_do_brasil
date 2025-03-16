@@ -15,19 +15,25 @@ def ler_lista_B3():
     # data_de_hoje = "Volume em " + datetime.now().strftime("%d/%m/%Y")
     data_de_hoje = "Volume no último dia útil (lido em " + datetime.now().strftime("%d/%m/%Y") + ")"
 
+    print("=== IDENTIFICANDO AÇÕES ===")
     for soup_acao in soup_tabela_acoes:
     # print("")
 
         try:
+            var_nome_empresa = soup_acao.find_all("td")[1].text.strip()
+            var_ticker = soup_acao.find("a").text.strip()
             lista_acoes.append({
-                "Nome da Empresa": soup_acao.find_all("td")[1].text.strip(),
-                "Ticker": soup_acao.find("a").text.strip(),
+                "Nome da Empresa": var_nome_empresa,
+                "Ticker": var_ticker,
                 data_de_hoje: soup_acao.find_all("td")[2].text.strip()
             })
+            print(var_ticker + ": " + var_nome_empresa)
         except:
             pass
 
     bd_lista_acoes = pd.DataFrame(lista_acoes)
+    print("=== " + str(len(bd_lista_acoes)) +  " AÇÕES IDENTIFICADAS ===")
+
     # bd_lista_acoes[data_de_hoje] = bd_lista_acoes[data_de_hoje].str.replace(".", "", regex = True).astype(int)
     bd_lista_acoes[data_de_hoje] = bd_lista_acoes[data_de_hoje].str.replace(".", "").astype(int)
     bd_lista_acoes = bd_lista_acoes.drop_duplicates(subset = "Ticker")
@@ -77,8 +83,8 @@ def tratar_lista_B3(bd_lista_acoes):
     return bd_lista_acoes_tratada
 
 
-bd_lista_acoes = ler_lista_B3()
-tratar_lista_B3(bd_lista_acoes)
+# bd_lista_acoes = ler_lista_B3()
+# tratar_lista_B3(bd_lista_acoes)
 
 # print(bd_lista_acoes)
 # print(len(bd_lista_acoes))

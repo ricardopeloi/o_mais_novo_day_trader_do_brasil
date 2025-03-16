@@ -363,4 +363,4 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
 
     return bd_acao_historico, bd_acoes
 
-detectar_martelos_todos_os_tickers()
+# detectar_martelos_todos_os_tickers()

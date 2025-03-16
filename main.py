@@ -35,13 +35,16 @@ def main():
 
     ## ATUALIZA DADOS NA PASTA
     from receber_lista_atualizada_tickers import tratar_lista_B3, ler_lista_B3
-    tratar_lista_B3(ler_lista_B3())
+    # tratar_lista_B3(ler_lista_B3())
+    # bd_lista_acoes = ler_lista_B3()
+    # bd_lista_acoes = pd.read_excel('Bases/Lista de ações.xlsx', index_col = "Ticker")
+    # tratar_lista_B3(bd_lista_acoes)
 
     from detectar_martelos import criar_regressao_bd_acao, detectar_martelos_todos_os_tickers
-    detectar_martelos_todos_os_tickers(
-        # qtd_dias_maximo = 55,
-        # qtd_dias_minimo = 13
-    )
+    # detectar_martelos_todos_os_tickers(
+    #     # qtd_dias_maximo = 55,
+    #     # qtd_dias_minimo = 13
+    # )
 
 
     ## IMPRIME AS 5 MELHORES AÇÕES DOS ÚLTIMOS DIAS
@@ -71,8 +74,8 @@ def main():
         #     end = datetime.today(),
         #     interval = "1d"
         # )
-        bd_historico_completo_acao = bd_historico_completo[bd_historico_completo["Ticker"] == acao]
-        bd_historico_completo_acao.index = bd_historico_completo_acao.index.tz_localize(None)
+        bd_historico_completo_acao = bd_historico_completo[bd_historico_completo["Ticker"] == acao].set_index("Date")
+        # bd_historico_completo_acao.index = bd_historico_completo_acao.index.tz_localize(None)
 
         print(acao)
         [bd_acao_regressao, media, margem, modelo_linear, valor_fechamento] = criar_regressao_bd_acao(
