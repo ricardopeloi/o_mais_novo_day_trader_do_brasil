@@ -22,10 +22,11 @@ def ler_lista_B3():
         try:
             var_nome_empresa = soup_acao.find_all("td")[1].text.strip()
             var_ticker = soup_acao.find("a").text.strip()
+            var_data_de_hoje = soup_acao.find_all("td")[2].text.strip()
             lista_acoes.append({
                 "Nome da Empresa": var_nome_empresa,
                 "Ticker": var_ticker,
-                data_de_hoje: soup_acao.find_all("td")[2].text.strip()
+                data_de_hoje: var_data_de_hoje
             })
             print(var_ticker + ": " + var_nome_empresa)
         except:
@@ -38,7 +39,7 @@ def ler_lista_B3():
     bd_lista_acoes[data_de_hoje] = bd_lista_acoes[data_de_hoje].str.replace(".", "").astype(int)
     bd_lista_acoes = bd_lista_acoes.drop_duplicates(subset = "Ticker")
     
-    bd_lista_acoes.to_excel('Bases/Lista de ações.xlsx')
+    bd_lista_acoes.to_excel('Bases/Lista de ações.xlsx', index = False)
 
     bd_lista_acoes = bd_lista_acoes.set_index("Ticker")
     return bd_lista_acoes
@@ -54,25 +55,48 @@ def tratar_lista_B3(bd_lista_acoes):
     # https://pypi.org/project/yfinance/
     # https://github.com/ranaroussi/yfinance/wiki/Ticker
 
+    import pandas as pd
     # !python -m pip install yfinance
     import yfinance as yf
 
     # !python -m pip install mplfinance
     # import mplfinance as mpf
 
+
+    listas_infos_completas = []
+    lista_cabecalho = []
+
+
     print("=== LENDO DADOS DE MARKET CAP ===")
     for contador, ticker_acao in enumerate(bd_lista_acoes.index):
         print(str(contador + 1) + " de " + str(len(bd_lista_acoes.index)) + "; " + ticker_acao)
         acao = yf.Ticker(ticker_acao + ".SA")
+        lista_infos_selecionadas = []
+
         try:
-            bd_lista_acoes.loc[ticker_acao, "Market Cap"] = acao.info["marketCap"]
+            # bd_lista_acoes.loc[ticker_acao, "Market Cap"] = acao.info["marketCap"]
+
+            lista_infos_selecionadas = bd_lista_acoes[bd_lista_acoes.index == ticker_acao].reset_index().iloc[0].to_list()
+            for campo in lista_campos_consulta_api:
+                try:
+                    lista_infos_selecionadas.append(acao.info[campo])
+                except:
+                    lista_infos_selecionadas.append(None)
+            # print(len(lista_infos_selecionadas))
+
+            listas_infos_completas.append(lista_infos_selecionadas)
         except:
             pass
-
+        
+        if contador == 0:
+            lista_cabecalho = bd_lista_acoes.reset_index().columns.to_list() + \
+                lista_campos_consulta_api
+            
+    bd_lista_acoes = pd.DataFrame(columns = lista_cabecalho, data = listas_infos_completas)
 
     print("=== FIM LEITURA DOS DADOS DE MARKET CAP ===")
     bd_lista_acoes_tratada = bd_lista_acoes[
-        (bd_lista_acoes["Market Cap"] >= var_corte_market_cap)
+        (bd_lista_acoes["marketCap"] >= var_corte_market_cap)
         * (bd_lista_acoes[var_coluna_volume].iloc[:, 0] >= var_corte_volume)
         # * (~bd_lista_acoes["Quote Type"].isna()) \
         ]
@@ -83,8 +107,28 @@ def tratar_lista_B3(bd_lista_acoes):
     return bd_lista_acoes_tratada
 
 
+lista_campos_consulta_api = \
+    ['industry', 'industryKey', 'industryDisp', 'sector', 'sectorKey', 'sectorDisp', 'fullTimeEmployees', 
+     'dividendRate', 'dividendYield', 'exDividendDate', 'payoutRatio', 'beta', 'trailingPE', 'forwardPE', 
+     'volume', 'regularMarketVolume', 'averageVolume', 'averageVolume10days', 'averageDailyVolume10Day', 
+     'marketCap',
+     'priceToSalesTrailing12Months', 'fiftyDayAverage', 'twoHundredDayAverage', 'trailingAnnualDividendRate', 
+     'trailingAnnualDividendYield', 'profitMargins', 'trailingEps', 'forwardEps', 'lastSplitFactor', 
+     'lastSplitDate', 'enterpriseToRevenue', 'enterpriseToEbitda', '52WeekChange', 'SandP52WeekChange', 
+     'lastDividendValue', 'lastDividendDate', 'recommendationMean', 'recommendationKey', 'numberOfAnalystOpinions', 
+     'totalCash', 'totalCashPerShare', 'ebitda', 'totalDebt', 'quickRatio', 'currentRatio', 'totalRevenue', 
+     'debtToEquity', 'revenuePerShare', 'returnOnAssets', 'returnOnEquity', 'grossProfits', 'freeCashflow', 
+     'operatingCashflow', 'earningsGrowth', 'revenueGrowth', 'grossMargins', 'ebitdaMargins', 'operatingMargins', 
+     'epsTrailingTwelveMonths', 'epsForward', 'epsCurrentYear', 'priceEpsCurrentYear', 'fiftyDayAverageChange', 
+     'fiftyDayAverageChangePercent', 'twoHundredDayAverageChange', 'twoHundredDayAverageChangePercent']
+
+
+
 # bd_lista_acoes = ler_lista_B3()
-# tratar_lista_B3(bd_lista_acoes)
+# import pandas as pd
+# bd_lista_acoes = pd.read_excel('Bases/Lista de ações.xlsx', index_col = "Ticker")
+# print(tratar_lista_B3(bd_lista_acoes))
+# print(bd_lista_acoes)
 
 # print(bd_lista_acoes)
 # print(len(bd_lista_acoes))

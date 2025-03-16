@@ -1,5 +1,3 @@
-# o_mais_novo_day_trader_do_brasil
-
 # To-Do
 ## 1. Coleta de dados
 - [] Criar sistema de atualização dos dados com base na data da última atualização, e assim dá pra parar de ficar criando arquivos novos
@@ -19,6 +17,7 @@
 
 ## Concluído até 16/03/2025
 ~~- [X] Fazer a base empilhada simples original~~
+~~- [X] Adicionar os indicadores que já estão presentes (além de Market Cap)~~
 
 
 ## Concluído até 15/03/2025
