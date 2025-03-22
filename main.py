@@ -48,13 +48,14 @@ def main():
 
 
     ## IMPRIME AS 5 MELHORES AÇÕES DOS ÚLTIMOS DIAS
-    lista_arquivos = listdir("Bases")
+    # lista_arquivos = listdir("Bases")
+    lista_arquivos = listdir(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases")
     lista_arquivos_analises = []
     for arquivo in lista_arquivos:
         if arquivo.find(" Análise") > 0:
             lista_arquivos_analises.append(datetime.strptime(arquivo.split(" Análise ")[1].split(".xls")[0], "%Y-%m-%d"))
 
-    var_arquivo_mais_recente = "Bases/Lista de ações Análise " + max(lista_arquivos_analises).strftime("%Y-%m-%d") + ".xlsx"
+    var_arquivo_mais_recente = r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Lista de ações Análise " + max(lista_arquivos_analises).strftime("%Y-%m-%d") + ".xlsx"
     # print(var_arquivo_mais_recente)
 
     
@@ -62,7 +63,8 @@ def main():
     print(bd_lista_acoes_analise.sort_values("Alfa HLC; últimos 55 dias", ascending = False).head(5))
     print()
 
-    bd_historico_completo = pd.read_excel("Bases\Base de Dados Histórico.xlsx")
+    # bd_historico_completo = pd.read_excel("Bases\Base de Dados Histórico.xlsx")
+    bd_historico_completo = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx")
 
 
     qtd_dias = 15
@@ -89,6 +91,9 @@ def main():
         )
         
         print()
+
+    input("Press Enter to continue...")
+
 
 
 if __name__ == "__main__":
