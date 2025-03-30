@@ -12,6 +12,8 @@
 ## 3. Análises
 - [] Um bom momento é quando o preço está voltando para a média móvel, pois é sinal que voltará a subir
     - Exemplo é CEMIG (CMIG4)
+- [] Fazer um modelo classificador para prever subida ou descida da ação
+- [] Fazer um modelo regressor para tentar prever o valor
 
 
 
