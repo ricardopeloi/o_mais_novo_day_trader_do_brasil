@@ -1,10 +1,10 @@
 # To-Do
 ## 1. Coleta de dados
 - [] Criar sistema de atualização dos dados com base na data da última atualização, e assim dá pra parar de ficar criando arquivos novos
-- [] Automatizar execução diária
 - [] Adicionar forma de instalar pacotes sem precisar fazê-lo manualmente cada vez ([exemplo](https://stackoverflow.com/questions/46419607/how-to-automatically-install-required-packages-from-a-python-script-as-necessary))
 
 ## 2. Modelagem dos indicadores/variáveis
+- [] Na Análise Exploratória, remover as colunas que sejam do tipo string
 - [] Testar se é realmente interessante utilizar colunas como dividendos e tamanho de mercado no modelo
 - [] Criar indicadores relacionados aos martelos, como a quantidade, se é subida/descida, há quantos dias foi o último
 - [] Adicionar coluna de %13d e %55d, que é o Preço/Alfa
@@ -15,6 +15,9 @@
 - [] Fazer um modelo classificador para prever subida ou descida da ação
 - [] Fazer um modelo regressor para tentar prever o valor
 
+
+## Concluído até 30/03/2025
+- [X] Automatizar execução diária
 
 
 ## Concluído até 16/03/2025

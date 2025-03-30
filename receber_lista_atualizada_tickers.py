@@ -108,13 +108,13 @@ def tratar_lista_B3(bd_lista_acoes):
 
 
 lista_campos_consulta_api = \
-    ['industry', 'industryKey', 'industryDisp', 'sector', 'sectorKey', 'sectorDisp', 'fullTimeEmployees', 
+    ['industry', 'sector', 'fullTimeEmployees', 
      'dividendRate', 'dividendYield', 'exDividendDate', 'payoutRatio', 'beta', 'trailingPE', 'forwardPE', 
-     'volume', 'regularMarketVolume', 'averageVolume', 'averageVolume10days', 'averageDailyVolume10Day', 
+     'averageVolume', 'averageVolume10days', 'averageDailyVolume10Day', 
      'marketCap',
      'priceToSalesTrailing12Months', 'fiftyDayAverage', 'twoHundredDayAverage', 'trailingAnnualDividendRate', 
      'trailingAnnualDividendYield', 'profitMargins', 'trailingEps', 'forwardEps', 'lastSplitFactor', 
-     'lastSplitDate', 'enterpriseToRevenue', 'enterpriseToEbitda', '52WeekChange', 'SandP52WeekChange', 
+     'lastSplitDate', 'enterpriseToRevenue', 'enterpriseToEbitda', '52WeekChange',  
      'lastDividendValue', 'lastDividendDate', 'recommendationMean', 'recommendationKey', 'numberOfAnalystOpinions', 
      'totalCash', 'totalCashPerShare', 'ebitda', 'totalDebt', 'quickRatio', 'currentRatio', 'totalRevenue', 
      'debtToEquity', 'revenuePerShare', 'returnOnAssets', 'returnOnEquity', 'grossProfits', 'freeCashflow', 

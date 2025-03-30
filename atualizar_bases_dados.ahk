@@ -16,9 +16,11 @@ roda_codigo_python(){
 {
 roda_codigo_python
 
-; SetTimer roda_codigo_python, 24*60*60*1000 ; Uma vez por dia
-; SetTimer roda_codigo_python, 60*1000 ; Uma vez por minuto
+SetTimer roda_codigo_python, 24*60*60*1000 ; Uma vez por dia
+; SetTimer roda_codigo_python, 12*60*60*1000 ; Uma vez a cada 12 horas
+; SetTimer roda_codigo_python, 60*60*1000 ; Uma vez por hora
 ; SetTimer roda_codigo_python, 3*60*1000 ; Uma vez a cada 3 minutos
-SetTimer roda_codigo_python, 60*60*1000 ; Uma vez por hora
+; SetTimer roda_codigo_python, 60*1000 ; Uma vez por minuto
+
 return
 }

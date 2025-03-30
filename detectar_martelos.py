@@ -354,6 +354,7 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
     bd_acao_historico = pd.DataFrame(columns = lista_cabecalho, data = lista_acoes)
     # display(bd_acao_historico)
 
+    bd_acao_historico = bd_acao_historico.drop([item for item in bd_acao_historico.columns.to_list() if "; Ticker" in item], axis = 1)
 
     # bd_acao_historico.set_index("Ticker").to_excel('Bases/Lista de ações Análise ' + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
     bd_acao_historico.set_index("Ticker").to_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Lista de ações Análise " + datetime.today().strftime("%Y-%m-%d") + '.xlsx')

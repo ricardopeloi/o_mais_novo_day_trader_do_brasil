@@ -35,7 +35,7 @@ def main():
 
     ## ATUALIZA DADOS NA PASTA
     from receber_lista_atualizada_tickers import tratar_lista_B3, ler_lista_B3
-    # tratar_lista_B3(ler_lista_B3())
+    tratar_lista_B3(ler_lista_B3())
     # bd_lista_acoes = ler_lista_B3()
     # bd_lista_acoes = pd.read_excel('Bases/Lista de ações.xlsx', index_col = "Ticker")
     # tratar_lista_B3(bd_lista_acoes)
@@ -92,7 +92,7 @@ def main():
         
         print()
 
-    input("Press Enter to continue...")
+    input("Aperte Enter para sair... ")
 
 
 
