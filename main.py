@@ -67,7 +67,7 @@ def main():
     bd_historico_completo = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx")
 
 
-    qtd_dias = 15
+    qtd_dias = 55
     for acao in bd_lista_acoes_analise.sort_values("Alfa HLC; últimos 55 dias", ascending = False).head(5).index:
         # print(acao)
 
@@ -80,8 +80,9 @@ def main():
         # bd_historico_completo_acao.index = bd_historico_completo_acao.index.tz_localize(None)
 
         print(acao)
+
         [_, _, _, _, _] = criar_regressao_bd_acao(
-            bd_historico_completo_acao,
+            bd_historico_completo_acao.sort_index().iloc[:int(qtd_dias/7*5), :],
             coluna = "Close",
             print_variaveis = True,
             # plot_grafico = True,
