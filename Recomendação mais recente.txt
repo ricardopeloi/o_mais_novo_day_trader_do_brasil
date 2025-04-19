@@ -1,0 +1,35 @@
+JBSS3
+Média: 37.6832
+Desvio padrão: 4.8268
+Desvio padrão (%): 0.1281
+Inclinação da reta (alfa, coeficiente angular): 0.4064
+Valor de fechamento (R$): 43.55
+
+UNIP6
+Média: 51.4205
+Desvio padrão: 4.8577
+Desvio padrão (%): 0.0945
+Inclinação da reta (alfa, coeficiente angular): 0.3631
+Valor de fechamento (R$): 53.00
+
+RENT3
+Média: 33.2005
+Desvio padrão: 3.9169
+Desvio padrão (%): 0.1180
+Inclinação da reta (alfa, coeficiente angular): 0.3550
+Valor de fechamento (R$): 40.25
+
+SBSP3
+Média: 100.9603
+Desvio padrão: 4.2066
+Desvio padrão (%): 0.0417
+Inclinação da reta (alfa, coeficiente angular): 0.3558
+Valor de fechamento (R$): 109.01
+
+MRFG3
+Média: 17.0368
+Desvio padrão: 2.2965
+Desvio padrão (%): 0.1348
+Inclinação da reta (alfa, coeficiente angular): 0.2068
+Valor de fechamento (R$): 20.70
+

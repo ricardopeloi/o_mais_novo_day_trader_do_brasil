@@ -50,12 +50,15 @@ def criar_regressao_bd_acao(
     # margem = 0.005
     margem = desvio_padrao/media
 
-    if print_variaveis == True:
-        print("Média: " + "{:.4f}".format(media))
-        print("Desvio padrão: " + "{:.4f}".format(desvio_padrao))
-        print("Desvio padrão (%): " + "{:.4f}".format(margem))
-        print("Inclinação da reta (alfa, coeficiente angular): " + "{:.4f}".format(alfa))
-        print("Valor de fechamento (R$): " + "{:.2f}".format(valor_fechamento))
+    var_print = \
+        "Média: " + "{:.4f}".format(media) + '\n' + \
+        "Desvio padrão: " + "{:.4f}".format(desvio_padrao) + '\n' + \
+        "Desvio padrão (%): " + "{:.4f}".format(margem) + '\n' + \
+        "Inclinação da reta (alfa, coeficiente angular): " + "{:.4f}".format(alfa) + '\n' + \
+        "Valor de fechamento (R$): " + "{:.2f}".format(valor_fechamento) + '\n' + '\n'
+    
+    if print_variaveis == True:        
+        print(var_print)
 
 
     if plot_grafico == True:
@@ -94,7 +97,7 @@ def criar_regressao_bd_acao(
         plt.title(titulo)
         plt.show()
 
-    return [bd_acao_coluna, media, desvio_padrao, modelo_linear, valor_fechamento]
+    return [bd_acao_coluna, media, desvio_padrao, modelo_linear, valor_fechamento, var_print]
 
 
 

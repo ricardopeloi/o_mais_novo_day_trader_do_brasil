@@ -68,6 +68,7 @@ def main():
 
 
     qtd_dias = 55
+    var_print_arquivo = ""
     for acao in bd_lista_acoes_analise.sort_values("Alfa HLC; últimos 55 dias", ascending = False).head(5).index:
         # print(acao)
 
@@ -79,19 +80,27 @@ def main():
         bd_historico_completo_acao = bd_historico_completo[bd_historico_completo["Ticker"] == acao].set_index("Date")
         # bd_historico_completo_acao.index = bd_historico_completo_acao.index.tz_localize(None)
 
-        print(acao)
+        # print(acao)
+        var_print_arquivo = var_print_arquivo + acao + '\n'
 
-        [_, _, _, _, _] = criar_regressao_bd_acao(
+        [_, _, _, _, _, var_print] = criar_regressao_bd_acao(
             bd_historico_completo_acao.sort_index().iloc[:int(qtd_dias/7*5), :],
             coluna = "Close",
-            print_variaveis = True,
+            print_variaveis = False,
             # plot_grafico = True,
             titulo = acao + " (fechamento dos últimos " + str(qtd_dias) + " dias)",
             tamanho_figsize = (15, 6),
             # rotacao = 60,
         )
         
-        print()
+        # print(var_print)
+        var_print_arquivo = var_print_arquivo + var_print
+
+    print(var_print_arquivo)
+
+    arquivo_output = open("Recomendação mais recente.txt", "w")
+    arquivo_output.write(var_print_arquivo)
+    arquivo_output.close() 
 
     input("Aperte Enter para sair... ")
 
