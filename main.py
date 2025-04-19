@@ -27,27 +27,17 @@ def check_and_install_packages(packages):
 
 
 
-def main():
+def gerar_top_recomendacoes(
+        var_qtd_top_acoes = 5
+    ):
     from os import listdir
     from datetime import datetime, timedelta
     import pandas as pd
+
+    from detectar_martelos import criar_regressao_bd_acao
     
+    # var_qtd_top_acoes = 5
 
-    ## ATUALIZA DADOS NA PASTA
-    from receber_lista_atualizada_tickers import tratar_lista_B3, ler_lista_B3
-    tratar_lista_B3(ler_lista_B3())
-    # bd_lista_acoes = ler_lista_B3()
-    # bd_lista_acoes = pd.read_excel('Bases/Lista de ações.xlsx', index_col = "Ticker")
-    # tratar_lista_B3(bd_lista_acoes)
-
-    from detectar_martelos import criar_regressao_bd_acao, detectar_martelos_todos_os_tickers
-    detectar_martelos_todos_os_tickers(
-        # qtd_dias_maximo = 55,
-        # qtd_dias_minimo = 13
-    )
-
-
-    ## IMPRIME AS 5 MELHORES AÇÕES DOS ÚLTIMOS DIAS
     # lista_arquivos = listdir("Bases")
     lista_arquivos = listdir(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases")
     lista_arquivos_analises = []
@@ -60,8 +50,8 @@ def main():
 
     
     bd_lista_acoes_analise = pd.read_excel(var_arquivo_mais_recente, index_col = "Ticker")
-    print(bd_lista_acoes_analise.sort_values("Alfa HLC; últimos 55 dias", ascending = False).head(5))
-    print()
+    # print(bd_lista_acoes_analise.sort_values("Alfa HLC; últimos 55 dias", ascending = False).head(5))
+    # print()
 
     # bd_historico_completo = pd.read_excel("Bases\Base de Dados Histórico.xlsx")
     bd_historico_completo = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx")
@@ -69,7 +59,8 @@ def main():
 
     qtd_dias = 55
     var_print_arquivo = ""
-    for acao in bd_lista_acoes_analise.sort_values("Alfa HLC; últimos 55 dias", ascending = False).head(5).index:
+    
+    for acao in bd_lista_acoes_analise.sort_values("Alfa HLC; últimos 55 dias", ascending = False).head(var_qtd_top_acoes).index:
         # print(acao)
 
         # bd_acao = yf.Ticker(acao + ".SA").history(
@@ -98,9 +89,38 @@ def main():
 
     print(var_print_arquivo)
 
-    arquivo_output = open("Recomendação mais recente.txt", "w")
+    arquivo_output = open("Recomendações/Top " + str(var_qtd_top_acoes) + " ações.txt", "w")
     arquivo_output.write(var_print_arquivo)
     arquivo_output.close() 
+
+
+
+def main():
+
+    ## ATUALIZA DADOS NA PASTA
+    from receber_lista_atualizada_tickers import tratar_lista_B3, ler_lista_B3
+    
+    ### Lê tudo do zero, via lista no site da B3
+    # bd_lista_acoes = ler_lista_B3()
+    tratar_lista_B3(ler_lista_B3())
+    
+    ### Lê a lista já lida anteriormente, presente na pasta do projeto
+    # bd_lista_acoes = pd.read_excel('Bases/Lista de ações.xlsx', index_col = "Ticker")
+    
+    # tratar_lista_B3(bd_lista_acoes)
+
+
+    from detectar_martelos import detectar_martelos_todos_os_tickers
+    detectar_martelos_todos_os_tickers(
+        # qtd_dias_maximo = 55,
+        # qtd_dias_minimo = 13
+    )
+
+
+    ## IMPRIME AS TOP AÇÕES DO ÚLTIMO ARQUIVO ATUALIZADO
+    gerar_top_recomendacoes(
+        var_qtd_top_acoes = 5
+    )
 
     input("Aperte Enter para sair... ")
 
