@@ -226,7 +226,7 @@ def processar_regressao_e_lista_de_indicadores(
     qtd_dias,
 ):
 
-    [_, _, _, modelo_linear, _] = criar_regressao_bd_acao(
+    [_, _, _, modelo_linear, _, _] = criar_regressao_bd_acao(
         bd_acao,
         coluna = coluna_analise,
         print_variaveis = False,
@@ -284,7 +284,7 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
                 bd_acao["Ticker"] = acao
                 bd_acoes = pd.concat([bd_acoes, bd_acao])
                 # bd_acao = bd_acao.drop("Ação", axis = 1)
-                # display(bd_acao)
+                # print(bd_acao)
 
                 if contador_acoes == 0:
                     lista_datas = bd_acao.index.strftime("%Y-%m-%d").to_list()
