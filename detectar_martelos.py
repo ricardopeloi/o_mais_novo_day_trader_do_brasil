@@ -329,56 +329,51 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
     import pandas as pd
     from datetime import datetime, timedelta
 
-
     bd_arquivo_original = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Lista de ações Tratada.xlsx").set_index("Ticker")
     bd_arquivo_original = bd_arquivo_original[bd_arquivo_original["Data da leitura (último dia útil)"] == max(bd_arquivo_original["Data da leitura (último dia útil)"])]
 
+    bd_acoes_import_historico = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx")
+
+    acoes = bd_acoes_import_historico["Ticker"].unique()
+    # acoes = ["CPLE6", "COCE5", "ALUP4"]
+    # acoes = ["COCE5", "ALUP4"]
 
     coluna_analise = "HLC"
-    acoes = bd_arquivo_original.index#[[0]]
-    # acoes = ["VIVT3", "CLSA3"]
 
-    print("=== LENDO DADOS DE HISTÓRICO ===")
+    print("=== MONTANDO BASE DE ANÁLISE ===")
     # var_qtd_acoes = 5
     var_qtd_acoes = len(acoes)
 
     for contador_acoes, acao in enumerate(acoes[:var_qtd_acoes]):
         print(str(contador_acoes + 1) + " de " + str(var_qtd_acoes) + "; " + acao)
         # print(acao)
-        if contador_acoes == 0:
-            bd_acoes = pd.DataFrame()
-
+        
+        bd_acao = bd_acoes_import_historico[
+            (bd_acoes_import_historico["Ticker"] == acao) *
+            (bd_acoes_import_historico["Date"] >= (max(bd_acoes_import_historico["Date"]) - timedelta(days=qtd_dias_maximo)))
+        ].set_index("Date")
+        bd_acao = bd_acao.select_dtypes(exclude=['object']).interpolate()
+        bd_acao["Ticker"] = acao
+        
         try:
-            bd_acao = yf.Ticker(acao + ".SA").history(
-                start = datetime.today() - timedelta(days=qtd_dias_maximo),
-                # assim ele lê apenas os dados entre a maior data da importação e o dia atual
-                # start = max(bd_arquivo_original["Date"]).date(), 
-                end = datetime.today(),
-                interval = "1d"
-            )
-
             if len(bd_acao) != 0:
-                bd_acao[coluna_analise] = (bd_acao["High"] + bd_acao["Low"] + bd_acao["Close"])/3
-                bd_acao["Ticker"] = acao
-                bd_acoes = pd.concat([bd_acoes, bd_acao])
-                # bd_acao = bd_acao.drop("Ação", axis = 1)
-                # print(bd_acao)
 
-                if contador_acoes == 0:
-                    lista_datas = bd_acao.index.strftime("%Y-%m-%d").to_list()
-                    # display(lista_datas)
+                # if contador_acoes == 0:
+                lista_datas = bd_acao.index.strftime("%Y-%m-%d").to_list()
+                # display(lista_datas)
 
-                    lista_cabecalho = []
-                    lista_acoes = []
-                
+                # lista_cabecalho = []
+                lista_acoes = []
+
                 lista_acao = []
+                lista_cabecalho = []
 
                 for counter, data in enumerate(lista_datas):
                     # display(data)
                     
-                    if contador_acoes == 0:
-                        lista_cabecalho = lista_cabecalho + [data + '; ' + s for s in bd_acao.columns]
-                    
+                    # if contador_acoes == 0:
+                        # lista_cabecalho = lista_cabecalho + [data + '; ' + s for s in bd_acao.columns]
+                    lista_cabecalho = lista_cabecalho + [data + '; ' + s for s in bd_acao.columns]
                     lista_acao = lista_acao + bd_acao.iloc[counter].to_list()
 
 
@@ -390,7 +385,7 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
                 # display(lista_regressao_e_indicadores_minimo)
 
                 lista_regressao_e_indicadores_cabecalho_maximo, lista_regressao_e_indicadores_maximo = processar_regressao_e_lista_de_indicadores(
-                    bd_acao.copy(),
+                    bd_acao.iloc[-(qtd_dias_maximo):].copy(),
                     coluna_analise,
                     qtd_dias_maximo
                 )
@@ -406,31 +401,30 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
                 # display(string_datas_martelo)
 
 
-                if contador_acoes == 0:
-                    lista_cabecalho = bd_arquivo_original.reset_index().columns.to_list() \
-                        + lista_cabecalho \
-                        + lista_regressao_e_indicadores_cabecalho_minimo \
-                        + lista_regressao_e_indicadores_cabecalho_maximo \
-                        + ["Martelos", "Tipos de Martelos"]
-                    # display(len(lista_cabecalho))
-                    # display(lista_cabecalho)
+                # if contador_acoes == 0:
+                lista_cabecalho = bd_arquivo_original.reset_index().columns.to_list() \
+                    + lista_cabecalho \
+                    + lista_regressao_e_indicadores_cabecalho_minimo \
+                    + lista_regressao_e_indicadores_cabecalho_maximo \
+                    + ["Martelos", "Tipos de Martelos"]
+                # display(len(lista_cabecalho))
+                # display(lista_cabecalho)
 
-                lista_acao = [acao] \
-                        + bd_arquivo_original.loc[acao].to_list() \
-                        + lista_acao \
-                        + lista_regressao_e_indicadores_minimo \
-                        + lista_regressao_e_indicadores_maximo \
-                        + [string_datas_martelo, string_tipos_martelo]
+                lista_acao = [acao] + bd_arquivo_original.loc[acao].to_list() \
+                    + lista_acao \
+                    + lista_regressao_e_indicadores_minimo \
+                    + lista_regressao_e_indicadores_maximo \
+                    + [string_datas_martelo, string_tipos_martelo]
                 # display(len(lista_acao))
 
                 lista_acoes.append(lista_acao)
                 # display(lista_acoes)
 
-        except:
+        except Exception as e:
             contador_acoes = contador_acoes - 1
-            print("erro")
+            print(e.args)
 
-    print("=== FIM DA LEITURA DOS DADOS DE HISTÓRICO ===")
+    print("=== FIM DA GERAÇÃO BASE DE ANÁLISE ===")
 
     bd_acao_historico = pd.DataFrame(columns = lista_cabecalho, data = lista_acoes)
     # display(bd_acao_historico)
@@ -440,18 +434,8 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
     # bd_acao_historico.set_index("Ticker").to_excel('Bases/Lista de ações Análise ' + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
     bd_acao_historico.set_index("Ticker").to_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Lista de ações Análise " + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
 
-    bd_acoes = bd_acoes.reset_index()
-    bd_acoes["Date"] = bd_acoes["Date"].dt.tz_localize(None)
 
-    bd_acoes_import = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx",
-                                    index_col = 0).reset_index()
-    bd_acoes_empilhada = pd.concat([bd_acoes_import, bd_acoes]).drop_duplicates(subset = ["Date", "Ticker"])
-    # bd_acoes.columns == ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Dividends', 'Stock Splits', 'HLC', 'Ticker']
-    # bd_acoes_import == ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Dividends', 'Stock Splits', 'HLC', 'Ticker'] 
-    bd_acoes_empilhada.set_index("Date").to_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx")
-
-
-    return bd_acao_historico, bd_acoes
+    return bd_acao_historico
 
 
 
