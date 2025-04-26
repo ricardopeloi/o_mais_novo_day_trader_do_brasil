@@ -1,4 +1,4 @@
-def ler_lista_B3():
+def ler_lista_B3(var_caminho = "Bases"):
     import requests
     from bs4 import BeautifulSoup
     from datetime import datetime
@@ -13,7 +13,8 @@ def ler_lista_B3():
     soup_tabela_acoes = soup.find('div', class_='table-container').find_all("tr")
     lista_acoes = []
     # data_de_hoje = "Volume em " + datetime.now().strftime("%d/%m/%Y")
-    data_de_hoje = "Volume no último dia útil (lido em " + datetime.now().strftime("%d/%m/%Y") + ")"
+    # data_de_hoje = "Volume no último dia útil (lido em " + datetime.now().strftime("%d/%m/%Y") + ")"
+    # data_de_hoje = datetime.now().strftime("%d/%m/%Y")
 
     print("=== IDENTIFICANDO AÇÕES ===")
     for soup_acao in soup_tabela_acoes:
@@ -22,31 +23,35 @@ def ler_lista_B3():
         try:
             var_nome_empresa = soup_acao.find_all("td")[1].text.strip()
             var_ticker = soup_acao.find("a").text.strip()
-            var_data_de_hoje = soup_acao.find_all("td")[2].text.strip()
+            var_volume = soup_acao.find_all("td")[2].text.strip()
             lista_acoes.append({
                 "Nome da Empresa": var_nome_empresa,
                 "Ticker": var_ticker,
-                data_de_hoje: var_data_de_hoje
+                "Volume no último dia útil": var_volume,
+                # "Data da leitura": data_de_hoje,
             })
             print(var_ticker + ": " + var_nome_empresa)
         except:
             pass
 
     bd_lista_acoes = pd.DataFrame(lista_acoes)
+    bd_lista_acoes["Data da leitura (último dia útil)"] = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
     print("=== " + str(len(bd_lista_acoes)) +  " AÇÕES IDENTIFICADAS ===")
 
     # bd_lista_acoes[data_de_hoje] = bd_lista_acoes[data_de_hoje].str.replace(".", "", regex = True).astype(int)
-    bd_lista_acoes[data_de_hoje] = bd_lista_acoes[data_de_hoje].str.replace(".", "").astype(int)
+    bd_lista_acoes["Volume no último dia útil"] = bd_lista_acoes["Volume no último dia útil"].str.replace(".", "").astype(int)
+    
     bd_lista_acoes = bd_lista_acoes.drop_duplicates(subset = "Ticker")
     
-    bd_lista_acoes.to_excel('Bases/Lista de ações.xlsx', index = False)
+    # print(var_caminho + '/Lista de ações.xlsx')
+    bd_lista_acoes.to_excel(var_caminho + '/Lista de ações.xlsx', index = False)
 
     bd_lista_acoes = bd_lista_acoes.set_index("Ticker")
     return bd_lista_acoes
 
 
 
-def tratar_lista_B3(bd_lista_acoes):
+def tratar_lista_B3(bd_lista_acoes, var_caminho = "Bases"):
     var_corte_market_cap = 50000000
     var_corte_volume = 20000
     var_coluna_volume = [col for col in bd_lista_acoes.columns if "Volume" in col]
@@ -101,10 +106,14 @@ def tratar_lista_B3(bd_lista_acoes):
         # * (~bd_lista_acoes["Quote Type"].isna()) \
         ]
 
+    bd_lista_acoes_tratada_original = pd.read_excel(var_caminho + '/Lista de ações Tratada.xlsx')
 
-    bd_lista_acoes_tratada.set_index("Ticker").to_excel('Bases/Lista de ações Tratada.xlsx')
+    bd_lista_acoes_tratada_empilhada = pd.concat([bd_lista_acoes_tratada, bd_lista_acoes_tratada_original])
 
-    return bd_lista_acoes_tratada
+    bd_lista_acoes_tratada_empilhada = bd_lista_acoes_tratada_empilhada.drop_duplicates(subset = ["Ticker", "Data da leitura (último dia útil)"])
+    bd_lista_acoes_tratada_empilhada.set_index("Ticker").to_excel(var_caminho + '/Lista de ações Tratada.xlsx')
+
+    return bd_lista_acoes_tratada, bd_lista_acoes_tratada_empilhada
 
 
 lista_campos_consulta_api = \

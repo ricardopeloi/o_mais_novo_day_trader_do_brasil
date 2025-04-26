@@ -259,6 +259,7 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
 
 
     bd_arquivo_original = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Lista de ações Tratada.xlsx").set_index("Ticker")
+    bd_arquivo_original = bd_arquivo_original[bd_arquivo_original["Data da leitura (último dia útil)"] == max(bd_arquivo_original["Data da leitura (último dia útil)"])]
 
 
     coluna_analise = "HLC"
@@ -266,8 +267,11 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
     # acoes = ["VIVT3", "CLSA3"]
 
     print("=== LENDO DADOS DE HISTÓRICO ===")
-    for contador_acoes, acao in enumerate(acoes):
-        print(str(contador_acoes + 1) + " de " + str(len(acoes)) + "; " + acao)
+    # var_qtd_acoes = 5
+    var_qtd_acoes = len(acoes)
+
+    for contador_acoes, acao in enumerate(acoes[:var_qtd_acoes]):
+        print(str(contador_acoes + 1) + " de " + str(var_qtd_acoes) + "; " + acao)
         # print(acao)
         if contador_acoes == 0:
             bd_acoes = pd.DataFrame()
@@ -364,8 +368,13 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
 
     bd_acoes = bd_acoes.reset_index()
     bd_acoes["Date"] = bd_acoes["Date"].dt.tz_localize(None)
-    bd_acoes = bd_acoes.set_index("Date")
-    bd_acoes.to_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx")
+
+    bd_acoes_import = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx",
+                                    index_col = 0).reset_index()
+    bd_acoes_empilhada = pd.concat([bd_acoes_import, bd_acoes]).drop_duplicates()
+    # bd_acoes.columns == ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Dividends', 'Stock Splits', 'HLC', 'Ticker']
+    # bd_acoes_import == ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Dividends', 'Stock Splits', 'HLC', 'Ticker'] 
+    bd_acoes_empilhada.set_index("Date").to_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx")
 
 
     return bd_acao_historico, bd_acoes
