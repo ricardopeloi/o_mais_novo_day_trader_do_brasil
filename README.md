@@ -1,6 +1,6 @@
 # To-Do
 ## 1. Coleta de dados
-- [] Criar sistema de atualização dos dados com base na data da última atualização, e assim dá pra parar de ficar criando arquivos novos
+- [] Deixar sistema mais discreto (env)
 - [] Adicionar forma de instalar pacotes sem precisar fazê-lo manualmente cada vez ([exemplo](https://stackoverflow.com/questions/46419607/how-to-automatically-install-required-packages-from-a-python-script-as-necessary))
 
 
@@ -17,6 +17,9 @@
 - [] Melhorar variáveis usadas, pois acredito que algumas variáveis ainda estão muito recentes e influenciam no output do modelo
 - [] Melhorar balanceamento e também a escala dos números das colunas
 
+
+## Concluído até 27/04/2025
+- [X] Criar sistema de atualização dos dados com base na data da última atualização, e assim dá pra parar de ficar criando arquivos novos
 
 
 ## Concluído até 19/04/2025
