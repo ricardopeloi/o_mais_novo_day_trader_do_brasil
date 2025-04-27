@@ -9,6 +9,11 @@ import yfinance as yf
 
 import numpy as np
 
+import os
+from pathlib import Path  # Python 3.6+ only
+from dotenv import load_dotenv
+env_path = Path('.') / '.env'
+load_dotenv(dotenv_path=env_path)
 
 
 def criar_regressao_bd_acao(
@@ -256,7 +261,7 @@ def gerar_arquivo_historico():
     from datetime import datetime, timedelta
 
 
-    bd_arquivo_original = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Lista de ações Tratada.xlsx").set_index("Ticker")
+    bd_arquivo_original = pd.read_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Lista de ações Tratada.xlsx").set_index("Ticker")
     bd_arquivo_original = bd_arquivo_original[bd_arquivo_original["Data da leitura (último dia útil)"] == max(bd_arquivo_original["Data da leitura (último dia útil)"])]
 
 
@@ -312,10 +317,10 @@ def gerar_arquivo_historico():
     bd_acoes = bd_acoes.reset_index()
     bd_acoes["Date"] = bd_acoes["Date"].dt.tz_localize(None)
 
-    bd_acoes_import = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx",
+    bd_acoes_import = pd.read_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Base de Dados Histórico.xlsx",
                                     index_col = 0).reset_index()
     bd_acoes_empilhada = pd.concat([bd_acoes_import, bd_acoes]).drop_duplicates(subset = ["Date", "Ticker"])
-    bd_acoes_empilhada.set_index("Date").to_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx")
+    bd_acoes_empilhada.set_index("Date").to_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Base de Dados Histórico.xlsx")
 
 
     return bd_acoes
@@ -329,14 +334,17 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
     import pandas as pd
     from datetime import datetime, timedelta
 
+    # print(os.environ.get('var_caminho_fonte') + r"\Bases\Lista de ações Tratada.xlsx")
+    # bd_arquivo_original = pd.read_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Lista de ações Tratada.xlsx").set_index("Ticker")
     bd_arquivo_original = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Lista de ações Tratada.xlsx").set_index("Ticker")
     bd_arquivo_original = bd_arquivo_original[bd_arquivo_original["Data da leitura (último dia útil)"] == max(bd_arquivo_original["Data da leitura (último dia útil)"])]
 
+    # bd_acoes_import_historico = pd.read_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Base de Dados Histórico.xlsx")
     bd_acoes_import_historico = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx")
 
     acoes = bd_acoes_import_historico["Ticker"].unique()
     # acoes = ["CPLE6", "COCE5", "ALUP4"]
-    # acoes = ["COCE5", "ALUP4"]
+    # acoes = ["COCE5", "ALUP4" ,"HAPV3" ,"AZUL4" ,"COGN3" ,"PETR4" ,"B3SA3" ,"USIM5"]
 
     coluna_analise = "HLC"
 
@@ -358,22 +366,22 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
         try:
             if len(bd_acao) != 0:
 
-                # if contador_acoes == 0:
-                lista_datas = bd_acao.index.strftime("%Y-%m-%d").to_list()
-                # display(lista_datas)
+                if contador_acoes == 0:
+                    lista_datas = bd_acao.index.strftime("%Y-%m-%d").to_list()
+                    # display(lista_datas)
 
-                # lista_cabecalho = []
-                lista_acoes = []
+                    lista_cabecalho = []
+                    lista_acoes = []
 
                 lista_acao = []
-                lista_cabecalho = []
+                # lista_cabecalho = []
 
                 for counter, data in enumerate(lista_datas):
                     # display(data)
                     
-                    # if contador_acoes == 0:
-                        # lista_cabecalho = lista_cabecalho + [data + '; ' + s for s in bd_acao.columns]
-                    lista_cabecalho = lista_cabecalho + [data + '; ' + s for s in bd_acao.columns]
+                    if contador_acoes == 0:
+                        lista_cabecalho = lista_cabecalho + [data + '; ' + s for s in bd_acao.columns]
+                    # lista_cabecalho = lista_cabecalho + [data + '; ' + s for s in bd_acao.columns]
                     lista_acao = lista_acao + bd_acao.iloc[counter].to_list()
 
 
@@ -401,14 +409,14 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
                 # display(string_datas_martelo)
 
 
-                # if contador_acoes == 0:
-                lista_cabecalho = bd_arquivo_original.reset_index().columns.to_list() \
-                    + lista_cabecalho \
-                    + lista_regressao_e_indicadores_cabecalho_minimo \
-                    + lista_regressao_e_indicadores_cabecalho_maximo \
-                    + ["Martelos", "Tipos de Martelos"]
-                # display(len(lista_cabecalho))
-                # display(lista_cabecalho)
+                if contador_acoes == 0:
+                    lista_cabecalho = bd_arquivo_original.reset_index().columns.to_list() \
+                        + lista_cabecalho \
+                        + lista_regressao_e_indicadores_cabecalho_minimo \
+                        + lista_regressao_e_indicadores_cabecalho_maximo \
+                        + ["Martelos", "Tipos de Martelos"]
+                    # display(len(lista_cabecalho))
+                    # display(lista_cabecalho)
 
                 lista_acao = [acao] + bd_arquivo_original.loc[acao].to_list() \
                     + lista_acao \
@@ -431,8 +439,9 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
 
     bd_acao_historico = bd_acao_historico.drop([item for item in bd_acao_historico.columns.to_list() if "; Ticker" in item], axis = 1)
 
-    # bd_acao_historico.set_index("Ticker").to_excel('Bases/Lista de ações Análise ' + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
-    bd_acao_historico.set_index("Ticker").to_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Lista de ações Análise " + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
+    bd_acao_historico.set_index("Ticker").to_excel('Bases/Lista de ações Análise ' + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
+    # bd_acao_historico.set_index("Ticker").to_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Lista de ações Análise " + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
+    
 
 
     return bd_acao_historico

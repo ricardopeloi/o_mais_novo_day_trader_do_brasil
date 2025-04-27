@@ -7,6 +7,11 @@ import yfinance as yf
 # !python -m pip install mplfinance
 # import mplfinance as mpf
 
+import os
+from pathlib import Path  # Python 3.6+ only
+from dotenv import load_dotenv
+env_path = Path('.') / '.env'
+load_dotenv(dotenv_path=env_path)
 
 
 def check_and_install_packages(packages):
@@ -28,7 +33,8 @@ def check_and_install_packages(packages):
 
 
 def gerar_top_recomendacoes(
-        var_qtd_top_acoes = 5
+        var_qtd_top_acoes = 5,
+        qtd_dias = 55
     ):
     from os import listdir
     from datetime import datetime, timedelta
@@ -38,18 +44,21 @@ def gerar_top_recomendacoes(
     
     # var_qtd_top_acoes = 5
 
-    # lista_arquivos = listdir("Bases")
-    lista_arquivos = listdir(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases")
+    lista_arquivos = listdir("Bases")
+    # lista_arquivos = listdir(os.environ.get('var_caminho_fonte').split("\\")[-1])
     lista_arquivos_analises = []
     for arquivo in lista_arquivos:
         if arquivo.find(" Análise") > 0:
             lista_arquivos_analises.append(datetime.strptime(arquivo.split(" Análise ")[1].split(".xls")[0], "%Y-%m-%d"))
 
-    var_arquivo_mais_recente = r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Lista de ações Análise " + max(lista_arquivos_analises).strftime("%Y-%m-%d") + ".xlsx"
+    # var_arquivo_mais_recente = os.environ.get('var_caminho_fonte') + r"\Bases\Lista de ações Análise " + max(lista_arquivos_analises).strftime("%Y-%m-%d") + ".xlsx"
+    # var_arquivo_mais_recente = r"\Bases\Lista de ações Análise " + max(lista_arquivos_analises).strftime("%Y-%m-%d") + ".xlsx"
     # print(var_arquivo_mais_recente)
 
     
-    bd_lista_acoes_analise = pd.read_excel(var_arquivo_mais_recente, index_col = "Ticker")
+    # bd_lista_acoes_analise = pd.read_excel(var_arquivo_mais_recente, index_col = "Ticker")
+    bd_lista_acoes_analise = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Lista de ações Análise " + max(lista_arquivos_analises).strftime("%Y-%m-%d") + ".xlsx", index_col = "Ticker")
+    
     # print(bd_lista_acoes_analise.sort_values("Alfa HLC; últimos 55 dias", ascending = False).head(5))
     # print()
 
@@ -57,10 +66,10 @@ def gerar_top_recomendacoes(
     bd_historico_completo = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx")
 
 
-    qtd_dias = 55
+    
     var_print_arquivo = ""
     
-    for acao in bd_lista_acoes_analise.sort_values("Alfa HLC; últimos 55 dias", ascending = False).head(var_qtd_top_acoes).index:
+    for acao in bd_lista_acoes_analise.sort_values("Alfa HLC; últimos " + str(qtd_dias) + " dias", ascending = False).head(var_qtd_top_acoes).index:
         # print(acao)
 
         # bd_acao = yf.Ticker(acao + ".SA").history(
@@ -101,13 +110,17 @@ def main():
     from receber_lista_atualizada_tickers import tratar_lista_B3, ler_lista_B3
     
     ### Lê tudo do zero, via lista no site da B3
-    # bd_lista_acoes = ler_lista_B3()
+    # var_caminho = os.environ.get('var_caminho_fonte')
+    # var_caminho = r"\Bases"
+
+    # # bd_lista_acoes = ler_lista_B3()
     tratar_lista_B3(ler_lista_B3())
+    # tratar_lista_B3(ler_lista_B3(var_caminho), var_caminho)
     
-    ### Lê a lista já lida anteriormente, presente na pasta do projeto
-    # bd_lista_acoes = pd.read_excel('Bases/Lista de ações.xlsx', index_col = "Ticker")
+    # ### Lê a lista já lida anteriormente, presente na pasta do projeto
+    # # bd_lista_acoes = pd.read_excel('Bases/Lista de ações.xlsx', index_col = "Ticker")
     
-    # tratar_lista_B3(bd_lista_acoes)
+    # # tratar_lista_B3(bd_lista_acoes)
 
 
     from detectar_martelos import detectar_martelos_todos_os_tickers
@@ -123,7 +136,6 @@ def main():
     )
 
     input("Aperte Enter para sair... ")
-
 
 
 if __name__ == "__main__":

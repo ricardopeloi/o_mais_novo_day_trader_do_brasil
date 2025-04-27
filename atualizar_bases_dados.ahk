@@ -6,7 +6,11 @@ roda_codigo_python(){
     pythonPath := "`"C:/Program Files/Python313/python.exe`""
 
     ; path to Python script
+    ; Value := EnvGet("var_caminho_fonte")
+
+    ; scriptPath := Value . "`"/main.py`""
     scriptPath := "`"C:/Users/ricardopeloi/OneDrive - falconi365/Data Science/O_Mais_Novo_Day_Trader_do_Brasil/o_mais_novo_day_trader_do_brasil/main.py`""
+    
 
     RunWait pythonPath . "" . " " . "" . scriptPath . " & cmd /k" 
 }
