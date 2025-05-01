@@ -14,6 +14,7 @@ from pathlib import Path  # Python 3.6+ only
 from dotenv import load_dotenv
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
+var_caminho = os.environ.get('var_caminho_fonte')
 
 
 def criar_regressao_bd_acao(
@@ -261,7 +262,7 @@ def gerar_arquivo_historico():
     from datetime import datetime, timedelta
 
 
-    bd_arquivo_original = pd.read_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Lista de ações Tratada.xlsx").set_index("Ticker")
+    bd_arquivo_original = pd.read_excel(var_caminho + r"\Bases\Lista de ações Tratada.xlsx").set_index("Ticker")
     bd_arquivo_original = bd_arquivo_original[bd_arquivo_original["Data da leitura (último dia útil)"] == max(bd_arquivo_original["Data da leitura (último dia útil)"])]
 
 
@@ -317,10 +318,10 @@ def gerar_arquivo_historico():
     bd_acoes = bd_acoes.reset_index()
     bd_acoes["Date"] = bd_acoes["Date"].dt.tz_localize(None)
 
-    bd_acoes_import = pd.read_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Base de Dados Histórico.xlsx",
+    bd_acoes_import = pd.read_excel(var_caminho + r"\Bases\Base de Dados Histórico.xlsx",
                                     index_col = 0).reset_index()
     bd_acoes_empilhada = pd.concat([bd_acoes_import, bd_acoes]).drop_duplicates(subset = ["Date", "Ticker"])
-    bd_acoes_empilhada.set_index("Date").to_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Base de Dados Histórico.xlsx")
+    bd_acoes_empilhada.set_index("Date").to_excel(var_caminho + r"\Bases\Base de Dados Histórico.xlsx")
 
 
     return bd_acoes
@@ -335,11 +336,11 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
     from datetime import datetime, timedelta
 
     # print(os.environ.get('var_caminho_fonte') + r"\Bases\Lista de ações Tratada.xlsx")
-    bd_arquivo_original = pd.read_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Lista de ações Tratada.xlsx").set_index("Ticker")
+    bd_arquivo_original = pd.read_excel(var_caminho + r"\Bases\Lista de ações Tratada.xlsx").set_index("Ticker")
     #f
     bd_arquivo_original = bd_arquivo_original[bd_arquivo_original["Data da leitura (último dia útil)"] == max(bd_arquivo_original["Data da leitura (último dia útil)"])]
 
-    bd_acoes_import_historico = pd.read_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Base de Dados Histórico.xlsx")
+    bd_acoes_import_historico = pd.read_excel(var_caminho + r"\Bases\Base de Dados Histórico.xlsx")
     #f  
 
     acoes = bd_acoes_import_historico["Ticker"].unique()
@@ -440,7 +441,7 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
     bd_acao_historico = bd_acao_historico.drop([item for item in bd_acao_historico.columns.to_list() if "; Ticker" in item], axis = 1)
 
     bd_acao_historico.set_index("Ticker").to_excel('Bases/Lista de ações Análise ' + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
-    # bd_acao_historico.set_index("Ticker").to_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Lista de ações Análise " + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
+    # bd_acao_historico.set_index("Ticker").to_excel(var_caminho + r"\Bases\Lista de ações Análise " + datetime.today().strftime("%Y-%m-%d") + '.xlsx')
     
 
 

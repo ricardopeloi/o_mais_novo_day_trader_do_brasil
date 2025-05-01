@@ -5,5 +5,4 @@ desktop.ini
 .env
 .gitignore
 
-definir_variaveis_ambiente.ahk
 atualizar_bases_dados.ahk

@@ -1,13 +1,10 @@
 # To-Do
 ## 1. Coleta de dados
-- [] Deixar sistema mais discreto (env)
-- [] Adicionar forma de instalar pacotes sem precisar fazê-lo manualmente cada vez ([exemplo](https://stackoverflow.com/questions/46419607/how-to-automatically-install-required-packages-from-a-python-script-as-necessary))
 
 
 ## 2. Modelagem dos indicadores/variáveis
 - [] Testar se é realmente interessante utilizar colunas como dividendos e tamanho de mercado no modelo
 - [] Criar indicadores relacionados aos martelos, como a quantidade, se é subida/descida, há quantos dias foi o último
-- [] Adicionar coluna de %13d e %55d, que é o Preço/Alfa
 
 
 ## 3. Análises
@@ -16,6 +13,14 @@
 - [] Fazer um modelo regressor para tentar prever o valor
 - [] Melhorar variáveis usadas, pois acredito que algumas variáveis ainda estão muito recentes e influenciam no output do modelo
 - [] Melhorar balanceamento e também a escala dos números das colunas
+
+
+## Concluído até 01/05/2025
+- [X] Deixar sistema mais discreto (env)
+- [X] Adicionar forma de instalar pacotes sem precisar fazê-lo manualmente cada vez ([exemplo](https://stackoverflow.com/questions/46419607/how-to-automatically-install-required-packages-from-a-python-script-as-necessary))
+    - A solução era usar um arquivo de requirements
+- ~~[] Adicionar coluna de %13d e %55d, que é o Preço/Alfa~~
+    - Retirei isso da To-Do List pq vi que é melhor ter a base de dados completa e ir desdobrando daí as análises com as funções que eu criei
 
 
 ## Concluído até 27/04/2025

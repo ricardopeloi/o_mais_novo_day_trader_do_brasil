@@ -1,0 +1,14 @@
+yfinance
+# os
+pandas
+datetime
+numpy
+requests
+bs4
+dotenv
+pathlib
+scikit-learn # sklearn
+matplotlib
+plotly
+IPython
+# random
