@@ -117,7 +117,7 @@ def main():
 
     # # bd_lista_acoes = ler_lista_B3()
     # tratar_lista_B3(ler_lista_B3())
-    # tratar_lista_B3(ler_lista_B3(var_caminho, var_print_tickers = False), var_caminho)
+    tratar_lista_B3(ler_lista_B3(var_caminho, var_print_tickers = False), var_caminho)
     
     # ### Lê a lista já lida anteriormente, presente na pasta do projeto
     # import pandas as pd
@@ -127,10 +127,10 @@ def main():
 
 
     from detectar_martelos import detectar_martelos_todos_os_tickers
-    # detectar_martelos_todos_os_tickers(
-    #     # qtd_dias_maximo = 55,
-    #     # qtd_dias_minimo = 13
-    # )
+    detectar_martelos_todos_os_tickers(
+        # qtd_dias_maximo = 55,
+        # qtd_dias_minimo = 13
+    )
 
 
     ## IMPRIME AS TOP AÇÕES DO ÚLTIMO ARQUIVO ATUALIZADO

@@ -2,11 +2,15 @@
 #SingleInstance Force
 
 roda_codigo_python(){
+
+    ; EnvSet "var_caminho_pasta", `"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil`"
+
     ; path to Python interpreter
     pythonPath := "`"C:/Program Files/Python313/python.exe`""
 
-    ; path to Python script
-    ; Value := EnvGet("var_caminho_fonte")
+    ; path to environment variable for the path
+    ; Value := EnvGet("var_caminho_pasta")
+    ; MsgBox %Value%
 
     ; scriptPath := Value . "`"/main.py`""
     scriptPath := "`"C:/Users/ricardopeloi/OneDrive - falconi365/Data Science/O_Mais_Novo_Day_Trader_do_Brasil/o_mais_novo_day_trader_do_brasil/main.py`""
