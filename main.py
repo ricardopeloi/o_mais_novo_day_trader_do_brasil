@@ -46,24 +46,25 @@ def gerar_top_recomendacoes(
 
     lista_arquivos = listdir("Bases")
     # lista_arquivos = listdir(os.environ.get('var_caminho_fonte').split("\\")[-1])
+    # print(lista_arquivos)
     lista_arquivos_analises = []
     for arquivo in lista_arquivos:
         if arquivo.find(" Análise") > 0:
             lista_arquivos_analises.append(datetime.strptime(arquivo.split(" Análise ")[1].split(".xls")[0], "%Y-%m-%d"))
 
-    # var_arquivo_mais_recente = os.environ.get('var_caminho_fonte') + r"\Bases\Lista de ações Análise " + max(lista_arquivos_analises).strftime("%Y-%m-%d") + ".xlsx"
+    var_arquivo_mais_recente = os.environ.get('var_caminho_fonte') + r"\Bases\Lista de ações Análise " + max(lista_arquivos_analises).strftime("%Y-%m-%d") + ".xlsx"
     # var_arquivo_mais_recente = r"\Bases\Lista de ações Análise " + max(lista_arquivos_analises).strftime("%Y-%m-%d") + ".xlsx"
     # print(var_arquivo_mais_recente)
 
     
-    # bd_lista_acoes_analise = pd.read_excel(var_arquivo_mais_recente, index_col = "Ticker")
-    bd_lista_acoes_analise = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Lista de ações Análise " + max(lista_arquivos_analises).strftime("%Y-%m-%d") + ".xlsx", index_col = "Ticker")
+    bd_lista_acoes_analise = pd.read_excel(var_arquivo_mais_recente, index_col = "Ticker")
+    #f
     
     # print(bd_lista_acoes_analise.sort_values("Alfa HLC; últimos 55 dias", ascending = False).head(5))
     # print()
 
-    # bd_historico_completo = pd.read_excel("Bases\Base de Dados Histórico.xlsx")
-    bd_historico_completo = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx")
+    bd_historico_completo = pd.read_excel("Bases\Base de Dados Histórico.xlsx")
+    #f
 
 
     
@@ -110,24 +111,26 @@ def main():
     from receber_lista_atualizada_tickers import tratar_lista_B3, ler_lista_B3
     
     ### Lê tudo do zero, via lista no site da B3
-    # var_caminho = os.environ.get('var_caminho_fonte')
+    var_caminho = os.environ.get('var_caminho_fonte') + r"\Bases"
     # var_caminho = r"\Bases"
+    print(var_caminho)
 
     # # bd_lista_acoes = ler_lista_B3()
-    tratar_lista_B3(ler_lista_B3())
-    # tratar_lista_B3(ler_lista_B3(var_caminho), var_caminho)
+    # tratar_lista_B3(ler_lista_B3())
+    # tratar_lista_B3(ler_lista_B3(var_caminho, var_print_tickers = False), var_caminho)
     
     # ### Lê a lista já lida anteriormente, presente na pasta do projeto
-    # # bd_lista_acoes = pd.read_excel('Bases/Lista de ações.xlsx', index_col = "Ticker")
+    # import pandas as pd
+    # bd_lista_acoes = pd.read_excel('Bases/Lista de ações.xlsx', index_col = "Ticker")
     
     # # tratar_lista_B3(bd_lista_acoes)
 
 
     from detectar_martelos import detectar_martelos_todos_os_tickers
-    detectar_martelos_todos_os_tickers(
-        # qtd_dias_maximo = 55,
-        # qtd_dias_minimo = 13
-    )
+    # detectar_martelos_todos_os_tickers(
+    #     # qtd_dias_maximo = 55,
+    #     # qtd_dias_minimo = 13
+    # )
 
 
     ## IMPRIME AS TOP AÇÕES DO ÚLTIMO ARQUIVO ATUALIZADO

@@ -1,4 +1,4 @@
-def ler_lista_B3(var_caminho = "Bases"):
+def ler_lista_B3(var_caminho = "Bases", var_print_tickers = True):
     import requests
     from bs4 import BeautifulSoup
     from datetime import datetime
@@ -30,7 +30,8 @@ def ler_lista_B3(var_caminho = "Bases"):
                 "Volume no último dia útil": var_volume,
                 # "Data da leitura": data_de_hoje,
             })
-            print(var_ticker + ": " + var_nome_empresa)
+            if var_print_tickers == True:
+                print(var_ticker + ": " + var_nome_empresa)
         except:
             pass
 
@@ -44,7 +45,8 @@ def ler_lista_B3(var_caminho = "Bases"):
     bd_lista_acoes = bd_lista_acoes.drop_duplicates(subset = "Ticker")
     
     # print(var_caminho + '/Lista de ações.xlsx')
-    bd_lista_acoes.to_excel(var_caminho + '/Lista de ações.xlsx', index = False)
+    print(var_caminho)
+    bd_lista_acoes.to_excel(var_caminho + r'\Lista de ações.xlsx', index = False)
 
     bd_lista_acoes = bd_lista_acoes.set_index("Ticker")
     return bd_lista_acoes

@@ -335,12 +335,12 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
     from datetime import datetime, timedelta
 
     # print(os.environ.get('var_caminho_fonte') + r"\Bases\Lista de ações Tratada.xlsx")
-    # bd_arquivo_original = pd.read_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Lista de ações Tratada.xlsx").set_index("Ticker")
-    bd_arquivo_original = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Lista de ações Tratada.xlsx").set_index("Ticker")
+    bd_arquivo_original = pd.read_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Lista de ações Tratada.xlsx").set_index("Ticker")
+    #f
     bd_arquivo_original = bd_arquivo_original[bd_arquivo_original["Data da leitura (último dia útil)"] == max(bd_arquivo_original["Data da leitura (último dia útil)"])]
 
-    # bd_acoes_import_historico = pd.read_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Base de Dados Histórico.xlsx")
-    bd_acoes_import_historico = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx")
+    bd_acoes_import_historico = pd.read_excel(os.environ.get('var_caminho_fonte') + r"\Bases\Base de Dados Histórico.xlsx")
+    #f  
 
     acoes = bd_acoes_import_historico["Ticker"].unique()
     # acoes = ["CPLE6", "COCE5", "ALUP4"]
