@@ -125,7 +125,7 @@ def gerar_base_top_analises(
     return bd_analises_top_acoes
 
 # display(gerar_base_top_analises().columns)
-display(gerar_base_top_analises())
+# display(gerar_base_top_analises())
 
 # var_arquivo = var_caminho + r"\Bases\Lista de ações Análise 2024-06-15.xlsx"
 # var_arquivo = var_caminho + r"\Bases\Lista de ações Análise 2025-03-15.xlsx"
@@ -195,7 +195,7 @@ def gerar_top_recomendacoes(
 
     arquivo_output = open("Recomendações/Top " + str(var_qtd_top_acoes) + " ações.txt", "w")
     arquivo_output.write(var_print_arquivo)
-    arquivo_output.close() 
+    arquivo_output.close()
 
 # gerar_top_recomendacoes(
 #         # var_qtd_top_acoes = 5,
