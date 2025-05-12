@@ -26,16 +26,10 @@ def criar_regressao_bd_acao(
     rotacao = 45,
     titulo = "Pontos no fechamento da ação",
     var_pular_final_de_semana_feriados = False,
-    ):
+):
 
     # !python -m pip install scikit-learn
     from sklearn.linear_model import LinearRegression
-
-    # !python -m pip install matplotlib
-    import matplotlib.pyplot as plt
-    from matplotlib import ticker
-    import matplotlib.dates as mdates
-
 
     bd_acao_coluna = bd_acao.reset_index()[[bd_acao.index.name, coluna]]
 
@@ -57,119 +51,29 @@ def criar_regressao_bd_acao(
     margem = desvio_padrao/media
 
     var_print = \
-        "Média: " + "{:.4f}".format(media) + '\n' + \
-        "Desvio padrão: " + "{:.4f}".format(desvio_padrao) + '\n' + \
+        "Preço médio (R$): " + "{:.4f}".format(media) + '\n' + \
+        "Desvio padrão (R$): " + "{:.4f}".format(desvio_padrao) + '\n' + \
         "Desvio padrão (%): " + "{:.4f}".format(margem) + '\n' + \
         "Inclinação da reta (alfa, coeficiente angular): " + "{:.4f}".format(alfa) + '\n' + \
-        "Valor de fechamento (R$): " + "{:.2f}".format(valor_fechamento) + '\n' + '\n'
+        "Preço de fechamento (R$): " + "{:.2f}".format(valor_fechamento) + '\n' + '\n'
     
     if print_variaveis == True:        
         print(var_print)
 
 
     if plot_grafico == True:
-        plt.figure(figsize = tamanho_figsize)
-
-        ax = plt.gca()
-
-        if var_pular_final_de_semana_feriados == True:
-            ax.xaxis.set_major_locator(ticker.LinearLocator(len(bd_acao_coluna)))
-            # ax.xaxis.set_major_formatter(mdates.ConciseDateFormatter(ax.xaxis.get_major_locator()))
-            # ax.xaxis.set_major_formatter(mdates.DateFormatter(fmt = "%d/%m/%y"))
-
-            plt.xticks(rotation = rotacao)
-
-            plt.scatter(x = bd_acao_coluna[bd_acao.index.name].dt.strftime("%d/%m/%y").astype(str), y = coluna, data = bd_acao_coluna, edgecolors='black', facecolors='none')
-
-            plt.plot(bd_acao_coluna[bd_acao.index.name].dt.strftime("%d/%m/%y").astype(str), bd_acao_coluna["Regressão"]-desvio_padrao, color = "blue", linestyle='dashed')
-            plt.plot(bd_acao_coluna[bd_acao.index.name].dt.strftime("%d/%m/%y").astype(str), bd_acao_coluna["Regressão"], color='green')
-            plt.plot(bd_acao_coluna[bd_acao.index.name].dt.strftime("%d/%m/%y").astype(str), bd_acao_coluna["Regressão"]+desvio_padrao, color = "blue", linestyle='dashed')
-
-            # ax.xaxis.set_major_formatter(mdates.DateFormatter(fmt = "%d/%m/%y"))
-            # ax.xaxis.set_major_formatter(mdates.ConciseDateFormatter(ax.xaxis.get_major_locator()))
-
-        else:
-            ax.xaxis.set_major_formatter(mdates.ConciseDateFormatter(ax.xaxis.get_major_locator()))
-
-            plt.xticks(bd_acao_coluna[bd_acao.index.name], rotation = rotacao)
-
-            plt.scatter(x = bd_acao_coluna[bd_acao.index.name], y = coluna, data = bd_acao_coluna, edgecolors='black', facecolors='none')
-
-            plt.plot(bd_acao_coluna[bd_acao.index.name], bd_acao_coluna["Regressão"]-desvio_padrao, color = "blue", linestyle='dashed')
-            plt.plot(bd_acao_coluna[bd_acao.index.name], bd_acao_coluna["Regressão"], color='green')
-            plt.plot(bd_acao_coluna[bd_acao.index.name], bd_acao_coluna["Regressão"]+desvio_padrao, color = "blue", linestyle='dashed')
-
-
-        plt.title(titulo)
-        plt.show()
+        from realizar_analises import plotar_grafico_regressao
+        plotar_grafico_regressao(
+            bd_acao_coluna,
+            coluna_analise = "HLC",
+            coluna_data = bd_acao.index.name,
+            tamanho_figsize = tamanho_figsize,
+            rotacao = rotacao,
+            titulo = titulo,
+            var_pular_final_de_semana_feriados = var_pular_final_de_semana_feriados
+        )
 
     return [bd_acao_coluna, media, desvio_padrao, modelo_linear, valor_fechamento, var_print]
-
-
-
-def candle_plot( # Usa o navegador para criar o gráfico interativo
-    dados,
-    volume = True,
-    mav = np.nan,
-    colors = ["orange", "yellow", "blue"],
-    titulo = "",
-    ):
-  
-    # !python -m pip install plotly
-    from plotly.subplots import make_subplots
-    import plotly.graph_objects as go
-
-    if volume == True:
-        fig = make_subplots(
-            rows = 2,
-            cols = 1,
-            shared_xaxes = True,
-            vertical_spacing = 0.1,
-            subplot_titles = ("Candlesticks", "Volume transacionado"),
-            row_width = [0.2, 0.7]
-        )
-    else:
-        fig = make_subplots(
-            rows = 1,
-            cols = 1,
-            shared_xaxes = True,
-            vertical_spacing = 0.1,
-            subplot_titles = ("Candlesticks"),
-            row_width = [0.2, 0.7]
-        )
-
-    fig.add_trace(go.Candlestick(x=dados.index,
-                        open = dados['Open'],
-                        high = dados['High'],
-                        low = dados['Low'],
-                        close = dados['Close']),
-                    row = 1, col = 1)
-
-    if mav is not np.nan:
-        for i in range(len(mav)):
-        # print(i)
-            dados["Close "+ str(mav[i]) +" dias"] = dados["Close"].rolling(window=mav[i]).mean()
-            fig.add_trace(go.Scatter(x=dados.index,
-                            y = dados["Close "+ str(mav[i]) +" dias"],
-                            mode = "lines",
-                            name = "Média móvel fechamento " + str(mav[i]) + " dias",
-                            marker=dict(color=colors[i])),
-                        row = 1, col = 1)
-
-    if volume == True:
-        fig.add_trace(go.Bar(x=dados.head(60).index,
-                            y = dados['Volume'],
-                            name = "Volume"),
-                    row = 2, col = 1)
-
-
-    fig.update_layout(
-        yaxis_title = "Preço",
-        xaxis_rangeslider_visible=False,
-        title=titulo,
-        )
-
-    fig.show()
 
 
 
@@ -451,3 +355,17 @@ def detectar_martelos_todos_os_tickers(qtd_dias_maximo = 55, qtd_dias_minimo = 1
 
 # gerar_arquivo_historico()
 # detectar_martelos_todos_os_tickers()
+
+# import pandas as pd
+# bd_historico_completo = pd.read_excel(r"Bases\Base de Dados Histórico.xlsx")
+# lista_acoes = ["AMBP3", "SBSP3", "ORVR3", "JBSS3", "TUPY3"]
+# for acao in lista_acoes:
+#     # print(bd_historico_completo[bd_historico_completo["Ticker"] == acao].head())
+#     from realizar_analises import candle_plot
+#     candle_plot( # Usa o navegador para criar o gráfico interativo
+#         bd_historico_completo[bd_historico_completo["Ticker"] == acao].sort_values("Date").set_index("Date"),
+#         volume = True,
+#         mav = np.nan,
+#         colors = ["orange", "yellow", "blue"],
+#         titulo = acao,
+#     )

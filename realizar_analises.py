@@ -1,6 +1,7 @@
 import os
 from os import listdir
 from datetime import datetime, timedelta
+import numpy as np
 import pandas as pd
 from IPython.display import display
 
@@ -11,8 +12,10 @@ load_dotenv(dotenv_path=env_path)
 var_caminho = os.environ.get('var_caminho_fonte')
 
 
-def get_lista_arquivos_analise():
-    lista_arquivos = listdir("Bases")
+def get_lista_arquivos_analise(
+    var_caminho_bases = "Bases"
+):
+    lista_arquivos = listdir(var_caminho_bases)
     # print(lista_arquivos)
     
     lista_arquivos_analises = []
@@ -22,6 +25,164 @@ def get_lista_arquivos_analise():
     
     return lista_arquivos_analises
 # print(get_lista_arquivos_analise())
+
+
+def plotar_grafico_regressao(
+    bd_acao_coluna,
+    coluna_analise = "Close",
+    coluna_data = "Date",
+    tamanho_figsize = (10,5),
+    rotacao = 45,
+    titulo = "Pontos no fechamento da ação",
+    var_pular_final_de_semana_feriados = False,
+):
+    import matplotlib.pyplot as plt
+    from matplotlib import ticker
+    import matplotlib.dates as mdates
+    plt.figure(figsize = tamanho_figsize)
+
+    ax = plt.gca()
+
+    desvio_padrao = bd_acao_coluna[coluna_analise].std()
+
+    if var_pular_final_de_semana_feriados == True:
+        ax.xaxis.set_major_locator(ticker.LinearLocator(len(bd_acao_coluna)))
+        # ax.xaxis.set_major_formatter(mdates.ConciseDateFormatter(ax.xaxis.get_major_locator()))
+        # ax.xaxis.set_major_formatter(mdates.DateFormatter(fmt = "%d/%m/%y"))
+
+        plt.xticks(rotation = rotacao)
+
+        plt.scatter(x = bd_acao_coluna[coluna_data].dt.strftime("%d/%m/%y").astype(str), y = coluna_analise, data = bd_acao_coluna, edgecolors='black', facecolors='none')
+
+        plt.plot(bd_acao_coluna[coluna_data].dt.strftime("%d/%m/%y").astype(str), bd_acao_coluna["Regressão"]-desvio_padrao, color = "blue", linestyle='dashed')
+        plt.plot(bd_acao_coluna[coluna_data].dt.strftime("%d/%m/%y").astype(str), bd_acao_coluna["Regressão"], color='green')
+        plt.plot(bd_acao_coluna[coluna_data].dt.strftime("%d/%m/%y").astype(str), bd_acao_coluna["Regressão"]+desvio_padrao, color = "blue", linestyle='dashed')
+
+        # ax.xaxis.set_major_formatter(mdates.DateFormatter(fmt = "%d/%m/%y"))
+        # ax.xaxis.set_major_formatter(mdates.ConciseDateFormatter(ax.xaxis.get_major_locator()))
+
+    else:
+        ax.xaxis.set_major_formatter(mdates.ConciseDateFormatter(ax.xaxis.get_major_locator()))
+
+        plt.xticks(bd_acao_coluna[coluna_data], rotation = rotacao)
+
+        plt.scatter(x = bd_acao_coluna[coluna_data], y = coluna_analise, data = bd_acao_coluna, edgecolors='black', facecolors='none')
+
+        plt.plot(bd_acao_coluna[coluna_data], bd_acao_coluna["Regressão"]-desvio_padrao, color = "blue", linestyle='dashed')
+        plt.plot(bd_acao_coluna[coluna_data], bd_acao_coluna["Regressão"], color='green')
+        plt.plot(bd_acao_coluna[coluna_data], bd_acao_coluna["Regressão"]+desvio_padrao, color = "blue", linestyle='dashed')
+
+
+    plt.title(titulo)
+    plt.show()
+
+
+
+def plotar_grafico_regressao_completo(
+    qtd_dias = 55,
+    coluna_analise = "HLC",
+    var_acao = "HAPV3",    
+    tamanho_figsize = (10,5), 
+    rotacao = 45, 
+    titulo = "", 
+    var_pular_final_de_semana_feriados = True
+):
+    
+    import pandas as pd
+    bd_dados_historico = pd.read_excel(r"C:\Users\ricardopeloi\OneDrive - falconi365\Data Science\O_Mais_Novo_Day_Trader_do_Brasil\o_mais_novo_day_trader_do_brasil\Bases\Base de Dados Histórico.xlsx")
+    # bd_dados_historico
+    
+    from detectar_martelos import criar_regressao_bd_acao
+    criar_regressao_bd_acao(
+        bd_dados_historico[bd_dados_historico["Ticker"] == var_acao].head(qtd_dias).set_index("Date"),
+        coluna = coluna_analise,
+        print_variaveis = False,
+        plot_grafico = True,
+        tamanho_figsize = tamanho_figsize,
+        rotacao = rotacao,
+        titulo = titulo,
+        var_pular_final_de_semana_feriados = var_pular_final_de_semana_feriados,
+    );
+
+# qtd_dias = 34
+# var_acao = "HAPV3"
+# coluna_analise = "HLC"
+# plotar_grafico_regressao_completo(
+#     qtd_dias = qtd_dias,
+#     coluna_analise = coluna_analise,
+#     var_acao = var_acao,
+#     # tamanho_figsize = (10,5), 
+#     # rotacao = 45, 
+#     titulo = var_acao + " - Preço " + coluna_analise + " nos últimos " + str(qtd_dias) + " dias", 
+#     # var_pular_final_de_semana_feriados = False,
+#     var_pular_final_de_semana_feriados = True
+# )
+
+
+
+def candle_plot( # Usa o navegador para criar o gráfico interativo
+    dados,
+    volume = True,
+    mav = np.nan,
+    colors = ["orange", "yellow", "blue"],
+    titulo = "",
+    ):
+  
+    # !python -m pip install plotly
+    from plotly.subplots import make_subplots
+    import plotly.graph_objects as go
+
+    if volume == True:
+        fig = make_subplots(
+            rows = 2,
+            cols = 1,
+            shared_xaxes = True,
+            vertical_spacing = 0.1,
+            subplot_titles = ("Candlesticks", "Volume transacionado"),
+            row_width = [0.2, 0.7]
+        )
+    else:
+        fig = make_subplots(
+            rows = 1,
+            cols = 1,
+            shared_xaxes = True,
+            vertical_spacing = 0.1,
+            subplot_titles = ("Candlesticks"),
+            row_width = [0.2, 0.7]
+        )
+
+    fig.add_trace(go.Candlestick(x=dados.index,
+                        open = dados['Open'],
+                        high = dados['High'],
+                        low = dados['Low'],
+                        close = dados['Close']),
+                    row = 1, col = 1)
+
+    if mav is not np.nan:
+        for i in range(len(mav)):
+        # print(i)
+            dados["Close "+ str(mav[i]) +" dias"] = dados["Close"].rolling(window=mav[i]).mean()
+            fig.add_trace(go.Scatter(x=dados.index,
+                            y = dados["Close "+ str(mav[i]) +" dias"],
+                            mode = "lines",
+                            name = "Média móvel fechamento " + str(mav[i]) + " dias",
+                            marker=dict(color=colors[i])),
+                        row = 1, col = 1)
+
+    if volume == True:
+        fig.add_trace(go.Bar(x=dados.head(60).index,
+                            y = dados['Volume'],
+                            name = "Volume"),
+                    row = 2, col = 1)
+
+
+    fig.update_layout(
+        yaxis_title = "Preço",
+        xaxis_rangeslider_visible=False,
+        title=titulo,
+        )
+
+    fig.show()
 
 
 
@@ -197,7 +358,10 @@ def gerar_top_recomendacoes(
     arquivo_output.write(var_print_arquivo)
     arquivo_output.close()
 
+
+
 # gerar_top_recomendacoes(
-#         # var_qtd_top_acoes = 5,
-#         # qtd_dias = 55
-#     )
+#     # var_qtd_top_acoes = 5,
+#     # qtd_dias = 55
+#     qtd_dias = 13
+# )

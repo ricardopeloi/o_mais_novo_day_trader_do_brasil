@@ -2,12 +2,21 @@
 ## 1. Coleta de dados
 
 
+
 ## 2. Modelagem dos indicadores/variáveis
 - [] Testar se é realmente interessante utilizar colunas como dividendos e tamanho de mercado no modelo
 - [] Criar indicadores relacionados aos martelos, como a quantidade, se é subida/descida, há quantos dias foi o último
 
 
+
 ## 3. Análises
+- []  Análise boa e simples:
+    - Alfa mostra tendência
+    - Desvio padrão é o canal
+    - Se o valor está abaixo da média da tendência, compra
+    - Se o valor está acima da tendência, vende (ou não compra)
+- [] Priorizar ações top 10 usando alfa 55 dias e refinando top 5 com alfa 34 dias.
+    - 12/05/2025: em construção no arquivo de análise _Rascunhão_
 - [] Um bom momento é quando o preço está voltando para a média móvel, pois é sinal que voltará a subir
     - Exemplo é CEMIG (CMIG4)
 - [] Fazer um modelo regressor para tentar prever o valor
@@ -15,6 +24,8 @@
 - [] Melhorar balanceamento e também a escala dos números das colunas
 
 
+
+# Concluído até...
 ## Concluído até 01/05/2025
 - [X] Deixar sistema mais discreto (env)
 - [X] Adicionar forma de instalar pacotes sem precisar fazê-lo manualmente cada vez ([exemplo](https://stackoverflow.com/questions/46419607/how-to-automatically-install-required-packages-from-a-python-script-as-necessary))
@@ -23,8 +34,10 @@
     - Retirei isso da To-Do List pq vi que é melhor ter a base de dados completa e ir desdobrando daí as análises com as funções que eu criei
 
 
+
 ## Concluído até 27/04/2025
 - [X] Criar sistema de atualização dos dados com base na data da última atualização, e assim dá pra parar de ficar criando arquivos novos
+
 
 
 ## Concluído até 19/04/2025

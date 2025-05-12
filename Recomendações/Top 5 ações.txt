@@ -1,35 +1,35 @@
 SBSP3
-Média: 102.9561
-Desvio padrão: 5.3600
+Preço médio (R$): 102.9561
+Desvio padrão (R$): 5.3600
 Desvio padrão (%): 0.0521
 Inclinação da reta (alfa, coeficiente angular): 0.4722
-Valor de fechamento (R$): 115.38
+Preço de fechamento (R$): 115.38
 
 JBSS3
-Média: 39.6094
-Desvio padrão: 4.7919
+Preço médio (R$): 39.6094
+Desvio padrão (R$): 4.7919
 Desvio padrão (%): 0.1210
 Inclinação da reta (alfa, coeficiente angular): 0.4117
-Valor de fechamento (R$): 47.87
+Preço de fechamento (R$): 47.87
 
 RENT3
-Média: 34.8505
-Desvio padrão: 3.9407
+Preço médio (R$): 34.8505
+Desvio padrão (R$): 3.9407
 Desvio padrão (%): 0.1131
 Inclinação da reta (alfa, coeficiente angular): 0.3660
-Valor de fechamento (R$): 42.81
+Preço de fechamento (R$): 42.81
 
 AMBP3
-Média: 128.7464
-Desvio padrão: 8.1154
+Preço médio (R$): 128.7464
+Desvio padrão (R$): 8.1154
 Desvio padrão (%): 0.0630
 Inclinação da reta (alfa, coeficiente angular): 0.3110
-Valor de fechamento (R$): 141.75
+Preço de fechamento (R$): 141.75
 
 UNIP6
-Média: 52.6899
-Desvio padrão: 4.0827
+Preço médio (R$): 52.6899
+Desvio padrão (R$): 4.0827
 Desvio padrão (%): 0.0775
 Inclinação da reta (alfa, coeficiente angular): 0.2595
-Valor de fechamento (R$): 54.36
+Preço de fechamento (R$): 54.36
 
